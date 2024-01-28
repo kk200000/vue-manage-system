@@ -49,7 +49,7 @@ import { useSidebarStore } from '../store/sidebar';
 import { useRouter } from 'vue-router';
 import imgurl from '../assets/img/img.jpg';
 
-const username: string | null = localStorage.getItem('ms_username');
+const username: string | null = localStorage.getItem('username');
 const message: number = 2;
 
 const sidebar = useSidebarStore();
@@ -68,7 +68,7 @@ onMounted(() => {
 const router = useRouter();
 const handleCommand = (command: string) => {
 	if (command == 'loginout') {
-		localStorage.removeItem('ms_username');
+		localStorage.removeItem('username');
 		router.push('/login');
 	} else if (command == 'user') {
 		router.push('/user');

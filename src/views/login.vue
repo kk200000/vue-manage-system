@@ -25,7 +25,7 @@
 				<div class="login-btn">
 					<el-button type="primary" @click="submitForm(login)">登录</el-button>
 				</div>
-				<p class="login-tips">Tips : 用户名和密码随便填。</p>
+				<p class="login-tips">Tips : 没注册的用户自动注册!</p>
 			</el-form>
 		</div>
 	</div>
@@ -46,9 +46,10 @@ interface LoginInfo {
 }
 
 const router = useRouter();
+// 初始账号密码
 const param = reactive<LoginInfo>({
 	username: 'admin',
-	password: '123123'
+	password: '123456'
 });
 
 const rules: FormRules = {
@@ -68,10 +69,10 @@ const submitForm = (formEl: FormInstance | undefined) => {
 	formEl.validate((valid: boolean) => {
 		if (valid) {
 			ElMessage.success('登录成功');
-			localStorage.setItem('ms_username', param.username);
+			localStorage.setItem('username', param.username);
 			const keys = permiss.defaultList[param.username == 'admin' ? 'admin' : 'user'];
 			permiss.handleSet(keys);
-			localStorage.setItem('ms_keys', JSON.stringify(keys));
+			localStorage.setItem('role', JSON.stringify(keys));
 			router.push('/');
 		} else {
 			ElMessage.error('登录成功');

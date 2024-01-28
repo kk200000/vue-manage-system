@@ -3,12 +3,14 @@
 	"version": "5.3.0",
 	"private": true,
 	"scripts": {
-		"dev": "vite",
+		"start": "vite",
 		"build": "vue-tsc --noEmit && vite build",
 		"serve": "vite preview"
 	},
 	"dependencies": {
 		"@element-plus/icons-vue": "^2.0.9",
+		"ant-design-vue": "^4.0.8",
+		"antd": "^5.12.5",
 		"axios": "^0.27.2",
 		"element-plus": "^2.2.14",
 		"md-editor-v3": "^2.2.1",
