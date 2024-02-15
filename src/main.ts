@@ -6,10 +6,15 @@ import router from './router'
 import { usePermissStore } from './store/permiss'
 import 'element-plus/dist/index.css'
 import './assets/css/icon.css'
+import service from './utils/request'
+import configureAxios from './utils/request'
 
 const app = createApp(App)
 app.use(createPinia())
 app.use(router)
+app.provide('$axios', service)
+app.config.globalProperties.$axios = service //配置axios的全局引用
+configureAxios(router) //  配置 Axios 实例并传递路由实例 初始化axios在pinia
 
 // 注册elementplus图标
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {

@@ -1,17 +1,17 @@
-import axios, {
-  AxiosInstance,
-  AxiosError,
-  AxiosResponse,
-  AxiosRequestConfig,
-} from 'axios'
+import axios, { AxiosInstance, AxiosError, AxiosRequestConfig } from 'axios'
+import router from '../router'
 
 const service: AxiosInstance = axios.create({
-  timeout: 2000,
+  baseURL: 'http://127.0.0.1:5000',
+  timeout: 1000,
 })
 // 请求拦截
 service.interceptors.request.use(
   (config: AxiosRequestConfig) => {
-    return config
+    const newConfig = config
+    // 添加 token
+    newConfig.headers['token'] = localStorage.getItem('token') || ''
+    return newConfig
   },
   (error: AxiosError) => {
     console.log(error)
@@ -21,16 +21,17 @@ service.interceptors.request.use(
 
 // 响应拦截
 service.interceptors.response.use(
-  (response: AxiosResponse) => {
-    if (response.status === 200) {
-      return response
-    } else {
-      Promise.reject()
+  (response) => {
+    if (response?.data?.code == '2020') {
+      // 如果响应状态码为 2020，跳转到注册页面
+      router.push('/register')
+    } else if (response.status === 200) {
+      return response.data
     }
   },
   (error: AxiosError) => {
     console.log(error)
-    return Promise.reject()
+    return Promise.reject(error)
   }
 )
 

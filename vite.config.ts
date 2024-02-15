@@ -4,8 +4,15 @@ import VueSetupExtend from 'vite-plugin-vue-setup-extend';
 import AutoImport from 'unplugin-auto-import/vite';
 import Components from 'unplugin-vue-components/vite';
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
+const path = require('path'); 
+
 export default defineConfig({
 	base: './',
+	resolve:{
+		alias: {
+      '@': path.resolve(__dirname, 'src'),
+    },
+	},
 	plugins: [
 		vue(),
 		VueSetupExtend(),

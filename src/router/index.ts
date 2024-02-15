@@ -19,7 +19,7 @@ const routes: RouteRecordRaw[] = [
           title: '系统首页',
           permiss: '1',
         },
-        component: () => import('../views/dashboard.vue'),
+        component: () => import('../views/homepage/dashboard.vue'),
       },
       {
         path: '/table',
@@ -136,7 +136,15 @@ const routes: RouteRecordRaw[] = [
     meta: {
       title: '登录',
     },
-    component: () => import('../views/login.vue'),
+    component: () => import('../views/login/login.vue'),
+  },
+  {
+    path: '/register',
+    name: 'Register',
+    meta: {
+      title: '注册',
+    },
+    component: () => import('../views/login/register.vue'),
   },
   {
     path: '/403',
@@ -144,7 +152,15 @@ const routes: RouteRecordRaw[] = [
     meta: {
       title: '没有权限',
     },
-    component: () => import('../views/403.vue'),
+    component: () => import('../views/errorPage/403.vue'),
+  },
+  {
+    path: '/404',
+    name: '404',
+    meta: {
+      title: '网页不存在',
+    },
+    component: () => import('../views/errorPage/404.vue'),
   },
 ]
 
@@ -157,7 +173,7 @@ router.beforeEach((to, from, next) => {
   document.title = `${to.meta.title} | 欢迎来到小区管理系统` // 浏览器 title 部分
   const username = localStorage.getItem('username')
   const permiss = usePermissStore()
-  if (!username && to.path !== '/login') {
+  if (!username && to.path !== '/login' && to.path !== '/register') {
     next('/login')
   } else if (to.meta.permiss && !permiss.key.includes(to.meta.permiss)) {
     // 如果没有权限，则跳转 403 页面
