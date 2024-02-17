@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import service from '../utils/request'
-
+import lodash from 'lodash'
 export const useUserLoginStore = defineStore('User', {
   state: () => {
     return {
@@ -27,14 +27,27 @@ export const useUserLoginStore = defineStore('User', {
         emergencyContactPhone: '',
         avatar_path: '',
         faceInfo_path: '',
+        role: '',
       },
     }
   },
   getters: {},
   actions: {
-    getUserData: async (state: any) => {
-      const personalInfo = await { url: '/getPersonalInfo' }
-      state.personalInfo = { ...state.personalInfo, ...personalInfo }
+    saveUserData(data: any) {
+      this.personalInfo = { ...this.personalInfo, ...data }
+      localStorage.setItem('role', this.personalInfo.role)
+    },
+
+    async getUserData() {
+      // 不能使用箭头函数，否则this为undefined
+      if (lodash.isEmpty(this.personalInfo.id)) {
+      }
+      const personalInfo = await service({
+        url: '/getPersonalInfo',
+        data: { userID: this.personalInfo.id },
+      })
+      this.personalInfo = { ...this.personalInfo, ...personalInfo }
+      localStorage.setItem('role', this.personalInfo.role)
     },
     uploadUserData: (payload: any) => {},
   },

@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
 import { usePermissStore } from '../store/permiss'
-import Home from '../views/home.vue'
+import Home from '../views/homepage/home.vue'
+import lodash from 'lodash'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -17,7 +18,6 @@ const routes: RouteRecordRaw[] = [
         name: 'dashboard',
         meta: {
           title: '系统首页',
-          permiss: '1',
         },
         component: () => import('../views/homepage/dashboard.vue'),
       },
@@ -64,7 +64,7 @@ const routes: RouteRecordRaw[] = [
           title: '权限管理',
           permiss: '13',
         },
-        component: () => import('../views/permission.vue'),
+        component: () => import('../views/adminOnly/permission.vue'),
       },
       {
         path: '/upload',
@@ -171,11 +171,16 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   document.title = `${to.meta.title} | 欢迎来到小区管理系统` // 浏览器 title 部分
-  const username = localStorage.getItem('username')
+  const token = localStorage.getItem('token')
   const permiss = usePermissStore()
-  if (!username && to.path !== '/login' && to.path !== '/register') {
+
+  console.log('权限管理', permiss.key, to.meta.permiss)
+  if (!token && to.path !== '/login' && to.path !== '/register') {
     next('/login')
-  } else if (to.meta.permiss && !permiss.key.includes(to.meta.permiss)) {
+  } else if (
+    to.meta.permiss &&
+    !lodash.includes(permiss.key, to.meta.permiss)
+  ) {
     // 如果没有权限，则跳转 403 页面
     next('/403')
   } else {

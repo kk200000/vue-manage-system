@@ -47,6 +47,7 @@ import type { FormInstance, FormRules } from 'element-plus'
 import { Lock, User } from '@element-plus/icons-vue'
 import service from '../../utils/request'
 import { getLoginFormRules } from '../../utils/rules'
+import { useUserLoginStore } from '@/store/userdata'
 
 interface LoginInfo {
   username: string
@@ -61,7 +62,7 @@ const param = reactive<LoginInfo>({
 })
 
 const rules: FormRules = getLoginFormRules(param)
-
+const user = useUserLoginStore()
 const permiss = usePermissStore() // 权限列表
 const login = ref<FormInstance>()
 const submitForm = (formEl: FormInstance) => {
@@ -76,11 +77,13 @@ const submitForm = (formEl: FormInstance) => {
       if (loginResult?.code == '200') {
         ElMessage.success(loginResult?.msg || '登录成功')
         localStorage.setItem('username', param.username)
-        const keys =
-          permiss.defaultList[param.username == 'admin' ? 'admin' : 'user']
-        permiss.handleSet(keys)
-        localStorage.setItem('role', JSON.stringify(keys))
         localStorage.setItem('token', loginResult?.data?.access_token)
+
+        user.saveUserData(loginResult.data.userInfo) // 拿到之后存一份
+        
+        permiss.getPermissionList()
+        permiss.updatekey() // 更新权限
+
         router.push('/')
       } else {
         ElMessage.error(loginResult?.msg || '登录失败,请联系管理员')
@@ -100,7 +103,7 @@ tags.clearTags()
   position: relative;
   width: 100%;
   height: 100%;
-  background-image: url(../assets/img/login-bg.jpg);
+  background-image: url(@/assets/img/login-bg.jpg);
   background-size: 100%;
 }
 .ms-title {

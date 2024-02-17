@@ -60,6 +60,8 @@ import service from '../../utils/request'
 import { getRegisterFormRules } from '../../utils/rules'
 import lodash from 'lodash'
 import { useRouter } from 'vue-router'
+import { usePermissStore } from '@/store/permiss'
+import { useUserLoginStore } from '@/store/userdata'
 
 interface RegisterInfo {
   username: string
@@ -73,7 +75,7 @@ interface RegisterInfo {
   // avatar_path: string
   // faceInfo_path: string
 }
-
+const user = useUserLoginStore()
 const router = useRouter()
 const param = reactive<RegisterInfo>({
   username: 'admin',
@@ -81,22 +83,22 @@ const param = reactive<RegisterInfo>({
   confirmPassword: '123',
   gender: '',
   phone: '13450209670',
-  role: '',
+  role: 'user',
   communityName: '默认1',
 })
 const getRoleByName = (username: any) => {
-  return lodash.includes(['admin'], username) ? 'admin' : 'user'
+  return lodash.includes(username, 'admin') ? 'admin' : 'user'
 }
+
 // 监听 username 字段的变化，当 username 变化时更新 role 字段的值
 watch(
   () => param.username,
-  (newValue, oldValue) => {
+  (newValue) => {
     const newRole = getRoleByName(newValue)
-    // 更新 param 对象中的 role 字段
     param.role = newRole
   }
 )
-
+const permiss = usePermissStore()
 const rules = getRegisterFormRules(param)
 const register = ref<FormInstance>()
 const submitForm = (formEl: FormInstance) => {
@@ -114,7 +116,12 @@ const submitForm = (formEl: FormInstance) => {
         localStorage.setItem('username', param.username)
         localStorage.setItem('token', registerResult?.data?.access_token)
 
-        router.push('/')
+        user.saveUserData(registerResult.data.userInfo) // 拿到之后存一份
+
+        permiss.getPermissionList()
+        permiss.updatekey() // 更新权限
+
+        router.replace('/')
       } else {
         ElMessage.error(registerResult?.msg || '注册失败，请联系管理员')
         return false
@@ -129,7 +136,7 @@ const submitForm = (formEl: FormInstance) => {
   position: relative;
   width: 100%;
   height: 100%;
-  background-image: url(../assets/img/login-bg.jpg);
+  background-image: url(@/assets/img/login-bg.jpg);
   background-size: 100%;
 }
 .ms-title {

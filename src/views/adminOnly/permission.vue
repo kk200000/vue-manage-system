@@ -1,8 +1,8 @@
 <template>
   <div class="container">
-    <div class="plugins-tips">
+    <!-- <div class="plugins-tips">
       通过 v-permiss 自定义指令实现权限管理,分为管理员和一般居民两种角色
-    </div>
+    </div> -->
     <div class="mgb20">
       <span class="label">角色：</span>
       <el-select v-model="role" @change="handleChange">
@@ -27,7 +27,7 @@
 <script setup lang="ts" name="permission">
 import { ref } from 'vue'
 import { ElTree } from 'element-plus'
-import { usePermissStore } from '../store/permiss'
+import { usePermissStore } from '../../store/permiss'
 
 const role = ref<string>('admin')
 
@@ -113,7 +113,7 @@ const permiss = usePermissStore()
 const checkedKeys = ref<any>([])
 const getPremission = () => {
   // call 接口返回权限
-  checkedKeys.value = permiss.defaultList[role.value]
+  checkedKeys.value = permiss.permissList[role.value]
 }
 getPremission()
 
@@ -125,7 +125,7 @@ const onSubmit = () => {
 }
 
 const handleChange = () => {
-  tree.value!.setCheckedKeys(permiss.defaultList[role.value])
+  tree.value!.setCheckedKeys(permiss.permissList[role.value])
 }
 </script>
 
