@@ -25,7 +25,7 @@ service.interceptors.response.use(
     console.log(response)
     if (response?.data?.code == 2020) {
       // 如果响应状态码为 2020，跳转到注册页面
-      router.push('/register')
+      // router.push('/register')
       return response.data
     } else if (response.status == 200) {
       return response.data

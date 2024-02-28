@@ -1,5 +1,7 @@
 <template>
   <div class="register-wrap">
+    <canvas id="login-background"></canvas>
+    <!-- 开启动画 -->
     <div class="ms-register">
       <div class="ms-title">用户注册</div>
       <el-form
@@ -9,13 +11,19 @@
         label-width="120px"
         class="ms-content"
       >
-        <el-form-item label="用户名" prop="username">
+        <el-form-item prop="username">
+          <template #label>
+            <span class="FormItemLabel">用户名</span>
+          </template>
           <el-input
             v-model="param.username"
             placeholder="请输入用户名"
           ></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="password">
+          <template #label>
+            <span class="FormItemLabel">密码</span>
+          </template>
           <el-input
             type="password"
             v-model="param.password"
@@ -23,6 +31,9 @@
           ></el-input>
         </el-form-item>
         <el-form-item label="确认密码" prop="confirmPassword">
+          <template #label>
+            <span class="FormItemLabel">确认密码</span>
+          </template>
           <el-input
             type="password"
             v-model="param.confirmPassword"
@@ -32,13 +43,19 @@
         <!-- 其他需要用户填写的信息 -->
 
         <el-form-item label="手机号" prop="phone">
+          <template #label>
+            <span class="FormItemLabel">手机号</span>
+          </template>
           <el-input v-model="param.phone" placeholder="请输入手机号"></el-input>
         </el-form-item>
 
         <el-form-item label="性别" prop="gender">
+          <template #label>
+            <span class="FormItemLabel">性别</span>
+          </template>
           <el-radio-group v-model="param.gender">
-            <el-radio label="男" />
-            <el-radio label="女" />
+            <el-radio label="男" style="color: #fff" />
+            <el-radio label="女" style="color: #fff" />
           </el-radio-group>
         </el-form-item>
 
@@ -53,7 +70,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, watch } from 'vue'
+import { ref, reactive, watch, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import type { FormInstance, FormRules } from 'element-plus'
 import service from '../../utils/request'
@@ -89,6 +106,27 @@ const param = reactive<RegisterInfo>({
 const getRoleByName = (username: any) => {
   return lodash.includes(username, 'admin') ? 'admin' : 'user'
 }
+// 调整 canvas 尺寸的函数
+function resizeCanvas() {
+  if (canvas.value) {
+    canvas.value.width = window.innerWidth
+    canvas.value.height = window.innerHeight
+    // 在这里重新绘制 Canvas 的内容，因为尺寸变化会清除 Canvas
+  }
+}
+const AnimationValue = 'reflectRain'
+let animationInstance: any = null
+const canvas = ref(null)
+onMounted(() => {
+  canvas.value = document.getElementById('login-background')
+  import(`../../utils/Animation/canvasAnimation/sparkRain/index`).then(
+    (_) => (animationInstance = new _.default(canvas.value))
+  )
+  // 初始化 canvas 尺寸
+  resizeCanvas()
+  // 监听窗口尺寸变化
+  window.addEventListener('resize', resizeCanvas)
+})
 
 // 监听 username 字段的变化，当 username 变化时更新 role 字段的值
 watch(
@@ -131,13 +169,9 @@ const submitForm = (formEl: FormInstance) => {
 }
 </script>
 
-<style scoped>
-.register-wrap {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  background-image: url(@/assets/img/login-bg.jpg);
-  background-size: 100%;
+<style>
+.FormItemLabel {
+  color: #fff;
 }
 .ms-title {
   width: 100%;
