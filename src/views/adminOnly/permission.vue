@@ -27,7 +27,9 @@
 <script setup lang="ts" name="permission">
 import { ref } from 'vue'
 import { ElTree } from 'element-plus'
-import { usePermissStore } from '../../store/permiss'
+import { usePermissStore } from '@/store/permiss'
+import service from '@/utils/request'
+import { useUserLoginStore } from '@/store/userdata'
 
 const role = ref<string>('admin')
 
@@ -106,22 +108,36 @@ const data: PermissionTree[] = [
     label: '支持作者',
   },
 ]
-
+const userInfo = useUserLoginStore()
 const permiss = usePermissStore()
 
 // 获取当前权限
 const checkedKeys = ref<any>([])
-const getPremission = () => {
-  // call 接口返回权限
+const getPremission = async () => {
+  // call 接口返回权
+
+  permiss.getAllpermission()
   checkedKeys.value = permiss.permissList[role.value]
+  console.log('大权限列表', permiss.permissList.value)
 }
 getPremission()
 
 // 保存权限
 const tree = ref<InstanceType<typeof ElTree>>()
-const onSubmit = () => {
+
+const onSubmit = async () => {
+  const newList = tree.value!.getCheckedKeys(false)
+
+  const PermissTree = await service({
+    url: '/permission/UpdatePermissionByID',
+    method: 'POST',
+    data: {
+      role: userInfo.personalInfo.role,
+      newList,
+    },
+  })
   // 获取选中的权限
-  console.log(tree.value!.getCheckedKeys(false))
+  tree.value = PermissTree.data.split(',')
 }
 
 const handleChange = () => {

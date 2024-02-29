@@ -143,7 +143,7 @@ const submitForm = (formEl: FormInstance) => {
   if (!formEl) return
   formEl.validate(async (valid: boolean) => {
     if (valid) {
-      const registerResult = await service({
+      const registerResult: any = await service({
         url: '/register',
         method: 'POST',
         data: { registerInfo: param },
@@ -152,12 +152,11 @@ const submitForm = (formEl: FormInstance) => {
       if (registerResult?.code == '200') {
         ElMessage.success(registerResult?.msg || '注册成功')
         localStorage.setItem('username', param.username)
-        localStorage.setItem('token', registerResult?.data?.access_token)
+        localStorage.setItem('token', registerResult?.data?.token)
 
         user.saveUserData(registerResult.data.userInfo) // 拿到之后存一份
 
-        permiss.getPermissionList()
-        permiss.updatekey() // 更新权限
+        permiss.getPermissionByID()
 
         router.replace('/')
       } else {

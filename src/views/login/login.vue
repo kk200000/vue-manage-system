@@ -110,15 +110,13 @@ const submitForm = (formEl: FormInstance) => {
     })
     if (valid) {
       if (loginResult?.code == '200') {
-        ElMessage.success(loginResult?.msg || '登录成功')
-        localStorage.setItem('username', param.username)
-        localStorage.setItem('token', loginResult?.data?.access_token)
-
         user.saveUserData(loginResult.data.userInfo) // 拿到之后存一份
 
-        permiss.getPermissionList()
-        permiss.updatekey() // 更新权限
+        localStorage.setItem('username', param.username)
+        localStorage.setItem('token', loginResult?.data?.token)
 
+        permiss.getPermissionByID() // 获取用户权限
+        ElMessage.success(loginResult?.msg || '登录成功')
         router.push('/')
       } else {
         ElMessage.error(loginResult?.msg || '登录失败,请联系管理员')

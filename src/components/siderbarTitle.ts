@@ -8,7 +8,7 @@ export const LeftSiderBarAdmin = [
   {
     icon: 'Calendar',
     index: '1',
-    title: '表格相关',
+    title: '管理员首页',
     permiss: '2',
     subs: [
       {
@@ -98,7 +98,7 @@ export const LeftSiderBarUser = [
   {
     icon: 'Calendar',
     index: '1',
-    title: '居民生活',
+    title: '居民首页',
     permiss: '2',
     subs: [
       {

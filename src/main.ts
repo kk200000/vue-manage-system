@@ -9,9 +9,13 @@ import './assets/css/icon.css'
 import service from './utils/request'
 import configureAxios from './utils/request'
 import lodash from 'lodash'
+import piniaPluginPersist from 'pinia-plugin-persist'
 
 const app = createApp(App)
-app.use(createPinia())
+const store = createPinia()
+store.use(piniaPluginPersist)
+app.use(store)
+
 app.use(router)
 app.provide('$axios', service)
 app.config.globalProperties.$axios = service //配置axios的全局引用
@@ -27,8 +31,8 @@ const token = localStorage.getItem('token')
 
 // 如果有token 就初始化权限
 if (token) {
-  permiss.getPermissionList()
-  permiss.updatekey() // 更新权限
+  permiss.getPermissionByID()
+  console.log('当前用户权限', permiss.key)
 }
 app.directive('permiss', {
   mounted(el, binding) {

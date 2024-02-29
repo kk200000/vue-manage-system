@@ -16,22 +16,46 @@ export const usePermissStore = defineStore('permiss', {
   },
 
   actions: {
-    updatekey() {
+    // 获取当前角色权限信息
+    async getPermissionByID() {
       const userInfo = useUserLoginStore()
-      const role = userInfo.personalInfo.role || localStorage.getItem('role')
-      console.log('权限初始化', role)
-      this.key = lodash.values(this.permissList[role]) || []
+      const permissions: any = await service({
+        url: '/permission/getpermissionByID',
+        method: 'POST',
+        data: { id: userInfo.personalInfo.id },
+      })
+
+      this.key = permissions.data[0].permission.split(',')
+
+      userInfo.personalInfo.role = permissions.data[0]?.role
     },
-    async getPermissionList() {
-      const permissions = await service({
-        url: '/GetpermissionsList',
+
+    async getAllpermission() {
+      const permissions: any = await service({
+        url: '/permission/getAllpermission',
         method: 'GET',
       })
 
-      permissions.forEach((item: any) => {
-        this.permissList[item.role] = item.permission.split(',')
+      // 遍历 permissions.data，并更新 permissList
+      permissions.data.forEach((item) => {
+        if (this.permissList.hasOwnProperty(item.role)) {
+          this.permissList[item.role] = item.permission.split(',')
+        }
+        // 如果 permissList 中没有该角色的键，你可以选择添加新角色或忽略
+        // 例如，动态添加新角色（取消以下注释以启用此功能）
+        // else {
+        //   permissList[item.role] = item.permission.split(',');
+        // }
       })
-      this.updatekey()
     },
+  },
+  persist: {
+    enabled: true,
+    strategies: [
+      {
+        key: 'permiss',
+        storage: sessionStorage,
+      },
+    ],
   },
 })

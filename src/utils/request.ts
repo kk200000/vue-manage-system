@@ -14,7 +14,6 @@ service.interceptors.request.use(
     return newConfig
   },
   (error: AxiosError) => {
-    console.log(error)
     return Promise.reject()
   }
 )
@@ -22,7 +21,6 @@ service.interceptors.request.use(
 // 响应拦截
 service.interceptors.response.use(
   (response) => {
-    console.log(response)
     if (response?.data?.code == 2020) {
       // 如果响应状态码为 2020，跳转到注册页面
       // router.push('/register')
@@ -32,7 +30,6 @@ service.interceptors.response.use(
     }
   },
   (error: AxiosError) => {
-    console.log(error)
     return Promise.reject(error)
   }
 )

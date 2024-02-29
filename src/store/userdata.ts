@@ -31,7 +31,7 @@ export const useUserLoginStore = defineStore('User', {
       },
     }
   },
-  getters: {},
+
   actions: {
     saveUserData(data: any) {
       this.personalInfo = { ...this.personalInfo, ...data }
@@ -49,6 +49,15 @@ export const useUserLoginStore = defineStore('User', {
       this.personalInfo = { ...this.personalInfo, ...personalInfo }
       localStorage.setItem('role', this.personalInfo.role)
     },
-    uploadUserData: (payload: any) => {},
+    updateUserData: (payload: any) => {},
+  },
+  persist: {
+    enabled: true,
+    strategies: [
+      {
+        key: 'userInfo',
+        storage: sessionStorage,
+      },
+    ],
   },
 })

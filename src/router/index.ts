@@ -174,7 +174,6 @@ router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token')
   const permiss = usePermissStore()
 
-  console.log('权限管理', permiss.key, to.meta.permiss)
   if (!token && to.path !== '/login' && to.path !== '/register') {
     next('/login')
   } else if (
