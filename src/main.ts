@@ -29,15 +29,11 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 const permiss = usePermissStore()
 const token = localStorage.getItem('token')
 
-// 如果有token 就初始化权限
-if (token) {
-  permiss.getPermissionByID()
-  console.log('当前用户权限', permiss.key)
-}
+
 app.directive('permiss', {
   mounted(el, binding) {
     // 如果权限不在配置表里，就设置 该元素隐藏起来
-    if (!lodash.includes(permiss.key, String(binding.value))) {
+    if (!lodash.includes(permiss.cureentKeys, String(binding.value))) {
       el.hidden = true
     }
   },

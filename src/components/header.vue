@@ -38,7 +38,7 @@
                 <el-dropdown-item>项目仓库</el-dropdown-item>
               </a>
               <el-dropdown-item command="user">个人中心</el-dropdown-item>
-              <el-dropdown-item divided command="loginout"
+              <el-dropdown-item divided command="logout"
                 >退出登录</el-dropdown-item
               >
             </el-dropdown-menu>
@@ -54,7 +54,9 @@ import { useSidebarStore } from '../store/sidebar'
 import { useRouter } from 'vue-router'
 import imgurl from '../assets/img/img.jpg'
 import { useUserLoginStore } from '@/store/userdata'
+import { usePermissStore } from '@/store/permiss'
 
+const permiss = usePermissStore()
 const userInfo = useUserLoginStore()
 const username: string | null = localStorage.getItem('username')
 const message: number = 2
@@ -76,10 +78,11 @@ onMounted(() => {
 // 用户名下拉菜单选择事件
 const router = useRouter()
 const handleCommand = (command: string) => {
-  if (command == 'loginout') {
+  if (command == 'logout') {
     localStorage.removeItem('username')
     localStorage.removeItem('token')
     localStorage.removeItem('role')
+    permiss.key = ''
     router.push('/login')
   } else if (command == 'user') {
     router.push('/user')

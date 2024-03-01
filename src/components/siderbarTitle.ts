@@ -7,7 +7,7 @@ export const LeftSiderBarAdmin = [
   },
   {
     icon: 'Calendar',
-    index: '1',
+    index: 'admin1',
     title: '管理员首页',
     permiss: '2',
     subs: [
@@ -98,22 +98,22 @@ export const LeftSiderBarUser = [
   {
     icon: 'Calendar',
     index: '1',
-    title: '居民首页',
+    title: '居民生活',
     permiss: '2',
     subs: [
       {
         index: '/table',
-        title: '聊天室',
+        title: '停车场',
         permiss: '2',
       },
       {
         index: '/import',
-        title: '小区车位情况',
+        title: '聊天室',
         permiss: '2',
       },
       {
         index: '/export',
-        title: '该用户生活费用（水费，电费，煤气费等）图表一览',
+        title: '生活费用',
         permiss: '2',
       },
     ],
@@ -122,7 +122,7 @@ export const LeftSiderBarUser = [
   {
     icon: 'DocumentCopy',
     index: '/tabs',
-    title: '生活 AI 管家',
+    title: '小区公告消息',
     permiss: '3',
   },
   {

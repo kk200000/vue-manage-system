@@ -10,23 +10,22 @@
       unique-opened
       router
     >
-      <template v-for="item in LeftSiderBar" :key="item.index">
+      <template v-for="(item, index) in LeftSiderBar" :key="item.index">
         <template v-if="item.subs">
-          <el-sub-menu
-            :index="item.index"
-            :key="item.index"
-            v-permiss="item.permiss"
-          >
+          <el-sub-menu :index="index" :key="index" v-permiss="item.permiss">
             <template #title>
               <el-icon>
                 <component :is="item.icon"></component>
               </el-icon>
               <span>{{ item.title }}</span>
             </template>
-            <template v-for="subItem in item.subs" :key="subItem.index">
+            <template
+              v-for="(subItem, index) in item.subs"
+              :key="subItem.index"
+            >
               <el-sub-menu
                 v-if="subItem.subs"
-                :index="subItem.index"
+                :index="index"
                 v-permiss="item.permiss"
               >
                 <template #title>{{ subItem.title }}</template>
@@ -48,6 +47,7 @@
             </template>
           </el-sub-menu>
         </template>
+
         <template v-else>
           <el-menu-item
             :index="item.index"
@@ -71,15 +71,16 @@ import { useSidebarStore } from '../store/sidebar'
 import { useRoute } from 'vue-router'
 import { useUserLoginStore } from '../store/userdata'
 import { LeftSiderBarAdmin, LeftSiderBarUser } from './siderbarTitle'
+import { usePermissStore } from '@/store/permiss'
 
+const permiss = usePermissStore()
 const sidebar = useSidebarStore()
 const userInfo = useUserLoginStore()
-const role = userInfo.personalInfo.role
+const role = localStorage.getItem('role')
 
 const LeftSiderBar = computed(() => {
   return role === 'admin' ? LeftSiderBarAdmin : LeftSiderBarUser
 })
-// console.log('现在的Bar有', LeftSiderBar.value, role)
 
 const route = useRoute()
 const onRoutes = computed(() => {

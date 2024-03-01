@@ -173,12 +173,13 @@ router.beforeEach((to, from, next) => {
   document.title = `${to.meta.title} | 欢迎来到小区管理系统` // 浏览器 title 部分
   const token = localStorage.getItem('token')
   const permiss = usePermissStore()
+  // 如果有token 就初始化权限
 
   if (!token && to.path !== '/login' && to.path !== '/register') {
     next('/login')
   } else if (
     to.meta.permiss &&
-    !lodash.includes(permiss.key, to.meta.permiss)
+    !lodash.includes(permiss.cureentKeys, to.meta.permiss)
   ) {
     // 如果没有权限，则跳转 403 页面
     next('/403')

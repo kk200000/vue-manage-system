@@ -118,7 +118,6 @@ const getPremission = async () => {
 
   permiss.getAllpermission()
   checkedKeys.value = permiss.permissList[role.value]
-  console.log('大权限列表', permiss.permissList.value)
 }
 getPremission()
 
