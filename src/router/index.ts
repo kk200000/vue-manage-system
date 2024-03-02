@@ -22,13 +22,13 @@ const routes: RouteRecordRaw[] = [
         component: () => import('../views/homepage/dashboard.vue'),
       },
       {
-        path: '/table',
-        name: 'basetable',
+        path: '/parking',
+        name: 'parking',
         meta: {
-          title: '表格',
+          title: '停车场',
           permiss: '2',
         },
-        component: () => import('../views/table.vue'),
+        component: () => import('../views/parking/parking.vue'),
       },
       {
         path: '/charts',

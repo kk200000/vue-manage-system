@@ -12,8 +12,8 @@ export const LeftSiderBarAdmin = [
     permiss: '2',
     subs: [
       {
-        index: '/table',
-        title: '常用表格',
+        index: '/parking',
+        title: '车辆管理',
         permiss: '2',
       },
       {
@@ -102,7 +102,7 @@ export const LeftSiderBarUser = [
     permiss: '2',
     subs: [
       {
-        index: '/table',
+        index: '/parking',
         title: '停车场',
         permiss: '2',
       },

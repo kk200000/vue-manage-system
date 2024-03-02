@@ -1,0 +1,302 @@
+<template>
+  <div>
+    <div class="container">
+      <div class="handle-box">
+        <el-input
+          v-model="query.carNumber"
+          placeholder="车牌号"
+          class="handle-input mr10"
+          clearable
+          @clear="getParkingData()"
+        ></el-input>
+        <el-button type="primary" :icon="Search" @click="handleSearch"
+          >搜索</el-button
+        >
+        <el-button type="primary" :icon="Plus">新增</el-button>
+        <span class="tips">TIPS:每小时停车费: ￥{{ perHourFee }}</span>
+      </div>
+
+      <el-table
+        :data="tableData"
+        border
+        stripe
+        class="table"
+        ref="multipleTable"
+        header-cell-class-name="table-header"
+      >
+        <el-table-column
+          prop="ownerID"
+          label="ID"
+          width="55"
+          align="center"
+        ></el-table-column>
+        <el-table-column prop="carNumber" label="车牌号"></el-table-column>
+        <el-table-column prop="carName" label="型号"></el-table-column>
+        <el-table-column label="停放位置" prop="parkingNumber">
+        </el-table-column>
+
+        <el-table-column
+          prop="parkingDuration"
+          label="时长(小时)"
+        ></el-table-column>
+        <el-table-column label="状态" align="center">
+          <template #default="scope">
+            <el-tag :type="scope.row.status == '1' ? 'success' : 'danger'">
+              {{ scope.row.status == '1' ? '正在使用' : '已出库' }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="停车消费" align="center">
+          <template #default="scope"
+            >￥{{ scope.row.parkingDuration * perHourFee }}</template
+          >
+        </el-table-column>
+        <el-table-column prop="lastTime" label="入/出库时间"></el-table-column>
+
+        <el-table-column label="操作" width="260" align="center">
+          <template #default="scope">
+            <el-button
+              text
+              :icon="VideoPlay"
+              @click="handleInAndOut(scope.row)"
+              v-permiss="15"
+            >
+              {{ scope.row.status == 1 ? '出库' : '入库' }}
+            </el-button>
+
+            <el-button
+              text
+              :icon="Edit"
+              @click="handleEdit(scope.$index, scope.row)"
+              v-permiss="15"
+            >
+              编辑
+            </el-button>
+            <el-button
+              text
+              :icon="Delete"
+              class="red"
+              @click="handleDelete(scope.row, scope.$index)"
+              v-permiss="16"
+            >
+              删除
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div class="pagination">
+        <el-pagination
+          background
+          layout="total, prev, pager, next"
+          :current-page="query.pageIndex"
+          :page-size="query.pageSize"
+          :total="pageTotal"
+          @current-change="handlePageChange"
+        ></el-pagination>
+      </div>
+    </div>
+
+    <!-- 编辑弹出框 -->
+    <el-dialog title="编辑" v-model="editVisible" width="30%">
+      <el-form label-width="70px">
+        <el-form-item label="车牌号">
+          <el-input v-model="form.carNumber"></el-input>
+        </el-form-item>
+        <el-form-item label="型号">
+          <el-input v-model="form.carName"></el-input>
+        </el-form-item>
+        <el-form-item label="时长">
+          <el-input disabled v-model="form.parkingDuration">
+            <template #append>
+              <el-tooltip content="如有异议,请向工作人员咨询" placement="top">
+                <el-button
+                  type="success"
+                  @click="ElMessage.success('更新时间成功!')"
+                  >更新时间</el-button
+                >
+              </el-tooltip>
+            </template>
+          </el-input>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="editVisible = false">取 消</el-button>
+          <el-button type="primary" @click="saveEdit">确 定</el-button>
+        </span>
+      </template>
+    </el-dialog>
+  </div>
+</template>
+
+<script setup lang="ts" name="basetable">
+import { ref, reactive } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { Delete, Edit, Search, Plus, VideoPlay } from '@element-plus/icons-vue'
+import service from '@/utils/request'
+import { formatDate } from '@/utils/day'
+
+const perHourFee = ref(13.5)
+const query = reactive({
+  carNumber: '',
+  carName: '',
+  pageIndex: 1,
+  pageSize: 10,
+})
+const tableData: any = ref([])
+const pageTotal = ref(0)
+// 获取表格数据
+const getParkingData = () => {
+  service({
+    url: '/parking/getCurrentParkingList',
+    method: 'GET',
+  }).then((res) => {
+    tableData.value = res.data.list
+    // 格式化时间
+    tableData.value.forEach((element) => {
+      const lastTime = formatDate(element.lastTime, 'YYYY-MM-DD HH:mm:ss')
+
+      element.lastTime = lastTime
+    })
+
+    pageTotal.value = res.data.pageTotal || 50
+  })
+}
+getParkingData()
+
+// 查询操作
+const handleSearch = () => {
+  // 如果提供了搜索关键词，则在客户端进行过滤
+  let list = []
+  if (query.carNumber) {
+    list = tableData.value.filter(
+      (item) => item.carNumber.includes(query.carNumber) // 假设车牌号字段是 carNumber
+    )
+    tableData.value = list
+    query.pageIndex = 1
+  } else {
+    getParkingData()
+  }
+}
+// 分页导航
+const handlePageChange = (val: number) => {
+  query.pageIndex = val
+  getParkingData()
+}
+
+// 删除操作
+const handleDelete = (item: any, index: number) => {
+  // 二次确认删除
+  ElMessageBox.confirm('确定要删除吗？', '提示', {
+    type: 'warning',
+  })
+    .then(async () => {
+      const res = await service({
+        url: 'parking/removeCarByCarNum',
+        method: 'DELETE',
+        data: { carNumber: item.carNumber },
+      })
+      if (res.code == 200) {
+        ElMessage.success('删除成功')
+        tableData.value.splice(index, 1)
+      } else {
+        ElMessage.error('删除失败')
+      }
+    })
+    .catch(() => {})
+}
+
+// 出库入库操作
+const handleInAndOut = async (item) => {
+  const flag = item.status == 0 ? 1 : 0 // 即将转换的状态
+  const NeedOut = flag == 0 ? true : false // 是否需要离场，若离场，费用交清
+  if (NeedOut) {
+    // 缴费
+    ElMessageBox.confirm(
+      `请缴费${item.parkingDuration * perHourFee.value}元`,
+      '谢谢光临~',
+      {
+        type: 'success',
+      }
+    ).then()
+  }
+
+  const res = await service({
+    url: '/parking/UpdateCurrentParkingList',
+    method: 'POST',
+    data: {
+      carNumber: item.carNumber,
+      flag,
+      parkingNumber: item?.parkingNumber,
+    },
+  })
+
+  getParkingData()
+}
+
+// 表格编辑时弹窗和保存
+const editVisible = ref(false)
+let form = reactive({
+  carName: '',
+  carNumber: '',
+  parkingDuration: '',
+})
+let idx: number = -1
+const handleEdit = (index: number, row: any) => {
+  idx = index
+  form.carName = row.carName
+  form.carNumber = row.carNumber
+  form.parkingDuration = row.parkingDuration
+  editVisible.value = true
+}
+const saveEdit = () => {
+  editVisible.value = false
+  ElMessage.success(`修改第 ${idx + 1} 行成功`)
+  tableData.value[idx].carName = form.carName
+  tableData.value[idx].carNumber = form.carNumber
+  tableData.value[idx].parkingDuration = form.parkingDuration
+
+  const saveData = service({
+    url: '/parking/UpdateCurrentParkingList',
+    method: 'POST',
+    data: { id: tableData.id },
+  })
+}
+</script>
+
+<style scoped>
+.handle-box {
+  display: flex;
+  margin-bottom: 20px;
+}
+.tips {
+  color: grey;
+  flex: 1;
+  text-align: right;
+  align-self: center;
+}
+
+.handle-select {
+  width: 120px;
+}
+
+.handle-input {
+  width: 300px;
+}
+.table {
+  width: 100%;
+  font-size: 14px;
+}
+.red {
+  color: #f56c6c;
+}
+.mr10 {
+  margin-right: 10px;
+}
+.table-td-thumb {
+  display: block;
+  margin: auto;
+  width: 40px;
+  height: 40px;
+}
+</style>
