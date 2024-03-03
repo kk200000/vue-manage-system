@@ -7,7 +7,6 @@
       background-color="#324157"
       text-color="#bfcbd9"
       active-text-color="#20a0ff"
-      unique-opened
       router
     >
       <template v-for="(item, index) in LeftSiderBar" :key="item.index">
