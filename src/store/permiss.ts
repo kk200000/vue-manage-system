@@ -54,12 +54,7 @@ export const usePermissStore = defineStore('permiss', {
     },
   },
   persist: {
-    enabled: true,
-    strategies: [
-      {
         key: 'permiss',
         storage: sessionStorage,
-      },
-    ],
   },
 })

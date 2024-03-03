@@ -52,12 +52,7 @@ export const useUserLoginStore = defineStore('User', {
     updateUserData: (payload: any) => {},
   },
   persist: {
-    enabled: true,
-    strategies: [
-      {
-        key: 'userInfo',
-        storage: sessionStorage,
-      },
-    ],
+    key: 'userInfo',
+    storage: sessionStorage,
   },
 })

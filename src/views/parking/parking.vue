@@ -12,7 +12,9 @@
         <el-button type="primary" :icon="Search" @click="handleSearch"
           >搜索</el-button
         >
-        <el-button type="primary" :icon="Plus">新增</el-button>
+        <el-button type="primary" :icon="Plus" @click="AddVisible = true"
+          >新增</el-button
+        >
         <span class="tips">TIPS:每小时停车费: ￥{{ perHourFee }}</span>
       </div>
 
@@ -126,6 +128,36 @@
         </span>
       </template>
     </el-dialog>
+
+    <!-- 新增弹出框 -->
+    <el-dialog title="新增" v-model="AddVisible" width="30%">
+      <el-form label-width="70px">
+        <el-form-item label="车牌号">
+          <el-input v-model="Addform.carNumber"></el-input>
+        </el-form-item>
+        <el-form-item label="型号">
+          <el-input v-model="Addform.carName"></el-input>
+        </el-form-item>
+        <el-form-item label="车位">
+          <el-input v-model="Addform.parkingNumber"></el-input>
+        </el-form-item>
+        <el-form-item label="状态">
+          <el-switch
+            v-model="Addform.flag"
+            active-text="已入库"
+            inactive-text="未入库"
+            active-value="1"
+            inactive-value="0"
+          />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="AddVisible = false">取 消</el-button>
+          <el-button type="primary" @click="HandleAdd">新 增</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -135,7 +167,9 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { Delete, Edit, Search, Plus, VideoPlay } from '@element-plus/icons-vue'
 import service from '@/utils/request'
 import { formatDate } from '@/utils/day'
+import { useUserLoginStore } from '@/store/userdata'
 
+const userInfo = useUserLoginStore()
 const perHourFee = ref(13.5)
 const query = reactive({
   carNumber: '',
@@ -163,6 +197,34 @@ const getParkingData = () => {
   })
 }
 getParkingData()
+let Addform = reactive({
+  carName: '',
+  carNumber: '',
+  parkingNumber: '',
+  flag: 1,
+})
+const AddVisible = ref(false)
+
+// 新增车位
+const HandleAdd = async () => {
+  const AddData = await service({
+    url: '/parking/AddCar',
+    method: 'POST',
+    data: {
+      carName: Addform.carName,
+      flag: Addform.flag,
+      carNumber: Addform.carNumber,
+      parkingNumber: Addform.parkingNumber,
+      ownerID: userInfo.personalInfo.id,
+      role: userInfo.personalInfo.role,
+    },
+  })
+  if (AddData.code == 200) {
+    ElMessage.success(AddData.msg)
+    AddVisible.value = false
+    getParkingData()
+  }
+}
 
 // 查询操作
 const handleSearch = () => {
@@ -249,18 +311,28 @@ const handleEdit = (index: number, row: any) => {
   form.parkingDuration = row.parkingDuration
   editVisible.value = true
 }
-const saveEdit = () => {
+const saveEdit = async () => {
   editVisible.value = false
-  ElMessage.success(`修改第 ${idx + 1} 行成功`)
+
   tableData.value[idx].carName = form.carName
   tableData.value[idx].carNumber = form.carNumber
   tableData.value[idx].parkingDuration = form.parkingDuration
-
-  const saveData = service({
+  const saveEditData = await service({
     url: '/parking/UpdateCurrentParkingList',
     method: 'POST',
-    data: { id: tableData.id },
+    data: {
+      carName: form.carName,
+      flag: tableData.value[idx].flag,
+      carNumber: form.carNumber,
+      parkingDuration: form.parkingDuration,
+      parkingNumber: tableData.value[idx].parkingNumber,
+      isEdit: true,
+      ownerID: tableData.value[idx].ownerID,
+      role: userInfo.personalInfo.role,
+    },
   })
+  ElMessage.info(`${saveEditData.msg}`)
+  getParkingData()
 }
 </script>
 
