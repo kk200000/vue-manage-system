@@ -21,7 +21,7 @@
 </template>
 
 <script setup>
-import { get } from '../../request/config'
+import service from '@/utils/request'
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 // 路由的引入
@@ -36,9 +36,8 @@ onMounted(() => {
 })
 
 const submitEvent = async () => {
-  let res = await get(`/getAnswer/${HumanMessage.value}`)
+  let res = await service({ url: `/getAnswer/${HumanMessage.value}` })
   AIMeassage.value = res.data
-  console.log(AIMeassage.value)
 }
 
 onMounted(() => {})

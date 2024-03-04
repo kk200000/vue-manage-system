@@ -74,7 +74,7 @@
               <el-input v-model="form.phoneNumber"></el-input>
             </el-form-item>
             <el-form-item label="真实姓名">
-              <el-input v-model="form.realname"></el-input>
+              <el-input v-model="form.userName"></el-input>
             </el-form-item>
             <el-form-item label="电子邮箱">
               <el-input v-model="form.email"></el-input>
@@ -121,7 +121,7 @@
 </template>
 
 <script setup lang="ts" name="user">
-import { reactive, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import VueCropper from 'vue-cropperjs'
 import 'cropperjs/dist/cropper.css'
 import avatar from '../assets/img/img.jpg'
@@ -133,6 +133,17 @@ const userInfo = useUserLoginStore()
 const address = ` ${userInfo.personalInfo.buildingNumber} - ${userInfo.personalInfo.unitNumber} - ${userInfo.personalInfo.doorNumber}`
 const name = localStorage.getItem('username')
 
+onMounted(() => {
+  userInfo.getUserData()
+  form.gender = userInfo.personalInfo.gender
+  form.unitNumber = userInfo.personalInfo.unitNumber
+  form.buildingNumber = userInfo.personalInfo.buildingNumber
+  form.doorNumber = userInfo.personalInfo.doorNumber
+  form.phoneNumber = userInfo.personalInfo.phoneNumber
+  form.userName = userInfo.personalInfo.userName
+  form.email = userInfo.personalInfo.email
+})
+
 const pwdform = reactive({
   oldPwd: '',
   newPwd: '',
@@ -143,9 +154,10 @@ const form = reactive({
   buildingNumber: '',
   doorNumber: '',
   phoneNumber: '',
-  realname: '',
+  userName: '',
   email: '',
 })
+// 更改个人信息
 const updateProfile = async () => {
   const res = await service({
     url: '/user/updateProfile',
@@ -156,13 +168,13 @@ const updateProfile = async () => {
       buildingNumber: form.buildingNumber,
       doorNumber: form.doorNumber,
       phoneNumber: form.phoneNumber,
-      realname: form.realname,
+      userName: form.userName,
       email: form.email,
+      id: userInfo.personalInfo.id,
     },
   })
-
+  console.log(res)
   if (res.code == 200) {
-    ChangePwddialogVisible.value = false
     ElMessage.success(res.msg)
   } else {
     ElMessage.info(res.msg)

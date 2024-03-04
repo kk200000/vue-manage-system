@@ -12,7 +12,7 @@ export const useUserLoginStore = defineStore('User', {
       personalInfo: {
         id: '',
         idCard: '',
-        realname: '',
+        userName: '',
         gender: '',
         phone: '',
         address: '',
@@ -43,7 +43,8 @@ export const useUserLoginStore = defineStore('User', {
       if (lodash.isEmpty(this.personalInfo.id)) {
       }
       const personalInfo = await service({
-        url: '/getPersonalInfo',
+        url: '/user/getPersonalInfo',
+        method: 'POST',
         data: { userID: this.personalInfo.id },
       })
       this.personalInfo = { ...this.personalInfo, ...personalInfo }

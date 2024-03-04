@@ -112,6 +112,11 @@ export const LeftSiderBarUser = [
         permiss: '2',
       },
       {
+        index: '/AITalk',
+        title: 'AI管家',
+        permiss: '2',
+      },
+      {
         index: '/export',
         title: '生活费用',
         permiss: '2',
@@ -128,7 +133,7 @@ export const LeftSiderBarUser = [
   {
     icon: 'Edit',
     index: '3',
-    title: '活动报名与信息发布',
+    title: '维修申请',
     permiss: '4',
     subs: [
       {

@@ -31,6 +31,15 @@ const routes: RouteRecordRaw[] = [
         component: () => import('../views/parking/parking.vue'),
       },
       {
+        path: '/AITalk',
+        name: 'AITalk',
+        meta: {
+          title: 'AI管家',
+          permiss: '2',
+        },
+        component: () => import('../views/aiManager/AiTalk.vue'),
+      },
+      {
         path: '/charts',
         name: 'basecharts',
         meta: {
@@ -184,6 +193,7 @@ router.beforeEach((to, from, next) => {
     // 如果没有权限，则跳转 403 页面
     next('/403')
   } else {
+    permiss.getPermissionByID() // 存疑
     next()
   }
 })
