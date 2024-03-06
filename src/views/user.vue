@@ -139,7 +139,7 @@ onMounted(() => {
   form.unitNumber = userInfo.personalInfo.unitNumber
   form.buildingNumber = userInfo.personalInfo.buildingNumber
   form.doorNumber = userInfo.personalInfo.doorNumber
-  form.phoneNumber = userInfo.personalInfo.phoneNumber
+  form.phoneNumber = userInfo.personalInfo.phone
   form.userName = userInfo.personalInfo.userName
   form.email = userInfo.personalInfo.email
 })
@@ -173,7 +173,7 @@ const updateProfile = async () => {
       id: userInfo.personalInfo.id,
     },
   })
-  console.log(res)
+
   if (res.code == 200) {
     ElMessage.success(res.msg)
   } else {

@@ -129,13 +129,13 @@ const routes: RouteRecordRaw[] = [
         component: () => import('../views/export.vue'),
       },
       {
-        path: '/import',
-        name: 'import',
+        path: '/myhelp',
+        name: 'myhelp',
         meta: {
-          title: '导入Excel',
+          title: '我的维修',
           permiss: '2',
         },
-        component: () => import('../views/import.vue'),
+        component: () => import('../views/myhelp.vue'),
       },
     ],
   },

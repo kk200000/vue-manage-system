@@ -17,9 +17,9 @@ export const LeftSiderBarAdmin = [
         permiss: '2',
       },
       {
-        index: '/import',
-        title: '导入Excel',
-        permiss: '2',
+        index: '/myhelp',
+        title: '请求管理',
+        permiss: '17',
       },
       {
         index: '/export',
@@ -44,11 +44,6 @@ export const LeftSiderBarAdmin = [
         index: '/form',
         title: '基本表单',
         permiss: '5',
-      },
-      {
-        index: '/upload',
-        title: '文件上传',
-        permiss: '6',
       },
       {
         index: '4',
@@ -106,11 +101,7 @@ export const LeftSiderBarUser = [
         title: '停车场',
         permiss: '2',
       },
-      {
-        index: '/import',
-        title: '聊天室',
-        permiss: '2',
-      },
+
       {
         index: '/AITalk',
         title: 'AI管家',
@@ -138,14 +129,15 @@ export const LeftSiderBarUser = [
     subs: [
       {
         index: '/form',
-        title: '公告信息',
+        title: '填写维修单',
         permiss: '5',
       },
       {
-        index: '/upload',
-        title: '活动报名',
-        permiss: '6',
+        index: '/myhelp',
+        title: '我的维修',
+        permiss: '2',
       },
+
       {
         index: '4',
         title: '与我有关',
