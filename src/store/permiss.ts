@@ -45,11 +45,6 @@ export const usePermissStore = defineStore('permiss', {
         if (this.permissList.hasOwnProperty(item.role)) {
           this.permissList[item.role] = item.permission.split(',')
         }
-        // 如果 permissList 中没有该角色的键，你可以选择添加新角色或忽略
-        // 例如，动态添加新角色（取消以下注释以启用此功能）
-        // else {
-        //   permissList[item.role] = item.permission.split(',');
-        // }
       })
     },
   },

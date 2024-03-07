@@ -133,7 +133,7 @@ const routes: RouteRecordRaw[] = [
         name: 'myhelp',
         meta: {
           title: '我的维修',
-          permiss: '2',
+          permiss: '6',
         },
         component: () => import('../views/myhelp.vue'),
       },
@@ -186,13 +186,15 @@ router.beforeEach((to, from, next) => {
 
   if (!token && to.path !== '/login' && to.path !== '/register') {
     next('/login')
-  } else if (
-    to.meta.permiss &&
-    !lodash.includes(permiss.cureentKeys, to.meta.permiss)
-  ) {
-    // 如果没有权限，则跳转 403 页面
-    next('/403')
-  } else {
+  }
+  // else if (
+  //   to.meta.permiss &&
+  //   !lodash.includes(permiss.cureentKeys, to.meta.permiss)
+  // ) {
+  //   // 如果没有权限，则跳转 403 页面
+  //   next('/403')
+  // }
+  else {
     permiss.getPermissionByID() // 存疑
     next()
   }

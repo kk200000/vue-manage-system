@@ -1,98 +1,194 @@
 <template>
-    <div>
-        <div class="container">
-            <div class="handle-box">
-                <el-button type="primary" @click="exportXlsx">导出Excel</el-button>
-            </div>
-            <el-table :data="tableData" border class="table" header-cell-class-name="table-header">
-                <el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
-                <el-table-column prop="name" label="姓名"></el-table-column>
-                <el-table-column prop="sno" label="学号"></el-table-column>
-                <el-table-column prop="class" label="班级"></el-table-column>
-                <el-table-column prop="age" label="年龄"></el-table-column>
-                <el-table-column prop="sex" label="性别"></el-table-column>
-            </el-table>
-        </div>
+  <div>
+    <div class="container">
+      <div class="quarter">第 {{ quarter }} 季度小区生活费</div>
+      <div class="handle-box">
+        <el-upload
+          action="#"
+          :limit="1"
+          accept=".xlsx, .xls"
+          :show-file-list="false"
+          :before-upload="beforeUpload"
+          :http-request="handleMany"
+        >
+          <el-button class="mr10" type="success">批量导入</el-button>
+        </el-upload>
+        <el-button type="primary" @click="exportXlsx">导出Excel</el-button>
+        <el-button type="danger" @click="clearData">删除年度数据</el-button>
+      </div>
+      <el-table
+        :data="tableData"
+        border
+        class="table"
+        header-cell-class-name="table-header"
+      >
+        <el-table-column prop="caseNo" label="单号"></el-table-column>
+        <el-table-column prop="departmentName" label="户名"></el-table-column>
+        <el-table-column prop="waterFee" label="水费"></el-table-column>
+        <el-table-column prop="electricFee" label="电费"></el-table-column>
+        <el-table-column prop="total" label="总计"></el-table-column>
+        <el-table-column prop="feeStatus" label="缴费状态">
+          <template #default="scope">
+            {{ scope.row.feeStatus == '0' ? '未缴费' : '已缴费' }}
+          </template>
+        </el-table-column>
+      </el-table>
     </div>
+  </div>
 </template>
 
 <script setup lang="ts" name="export">
-import { ref } from 'vue';
-import * as XLSX from 'xlsx';
+import { ElMessage, ElMessageBox, UploadProps } from 'element-plus'
+import service from '@/utils/request'
+import { onMounted, ref } from 'vue'
+import * as XLSX from 'xlsx'
+import { useUserLoginStore } from '@/store/userdata'
 
-interface TableItem {
-    id: number;
-    name: string;
-    sno: string;
-    class: string;
-    age: string;
-    sex: string;
+// 加载Excel
+const importList = ref<any>([])
+const beforeUpload: UploadProps['beforeUpload'] = async (rawFile) => {
+  importList.value = await analysisExcel(rawFile)
+  return true
+}
+const analysisExcel = (file: any) => {
+  return new Promise(function (resolve, reject) {
+    const reader = new FileReader()
+    reader.onload = function (e: any) {
+      const data = e.target.result
+      let datajson = XLSX.read(data, {
+        type: 'binary',
+      })
+
+      const sheetName = datajson.SheetNames[0]
+      const result = XLSX.utils.sheet_to_json(datajson.Sheets[sheetName])
+      resolve(result)
+    }
+    reader.readAsBinaryString(file)
+  })
+}
+onMounted(() => {
+  getData()
+})
+const handleMany = async () => {
+  // 把数据传给服务器后获取最新列表，这里只是示例，不做请求
+  const list = importList.value.map((item: any, index: number) => {
+    return {
+      id: index,
+      caseNo: item['单号'],
+      departmentName: item['户名'],
+      waterFee: item['水费'],
+      electricFee: item['水费'],
+      total: item['总计'],
+      feeStatus: item['缴费状态'],
+    }
+  })
+  tableData.value.push(...list)
 }
 
-const tableData = ref<TableItem[]>([]);
-// 获取表格数据
-const getData = () => {
-    tableData.value = [
-        {
-            id: 1,
-            name: '小明',
-            sno: 'S001',
-            class: '一班',
-            age: '10',
-            sex: '男',
-        },
-        {
-            id: 2,
-            name: '小红',
-            sno: 'S002',
-            class: '一班',
-            age: '9',
-            sex: '女',
-        },
-    ];
-};
-getData();
+const quarter = ref(1) // 第几季度
+const tableData = ref([])
+const userInfo = useUserLoginStore()
+const getDataByRole = () => {
+  if (userInfo.personalInfo.role == 'admin') getData()
+  else {
+    getDataByID()
+  }
+}
+// 管理员获取表格数据
+const getData = async () => {
+  const res = await service({
+    url: '/fee/getlist?quarter=' + quarter.value,
+    method: 'GET',
+  })
+  tableData.value = res.data || []
+}
+// 用户获取数据
+const getDataByID = async () => {
+  const res = await service({
+    url: '/fee/getCurrentUserFee',
+    method: 'POST',
+    data: {
+      id: userInfo.personalInfo.id,
+    },
+  })
+  tableData.value = res.data || []
+}
 
-const list = [['序号', '姓名', '学号', '班级', '年龄', '性别']];
+const clearData = async () => {
+  // 二次确认删除
+  ElMessageBox.confirm('确定要删除吗？', '提示', {
+    type: 'warning',
+  }).then(async () => {
+    const res = await service({
+      url: '/fee/removeAll',
+      method: 'DELETE',
+    })
+    if (res.code == 200) {
+      ElMessage.success(res.msg)
+      tableData.value = []
+    } else {
+      ElMessage.error(res.msg)
+    }
+  })
+}
+
+const list = [['序号', '单号', '户名', '水费', '电费', '总计', '缴费状态']]
 const exportXlsx = () => {
-    tableData.value.map((item: any, i: number) => {
-        const arr: any[] = [i + 1];
-        arr.push(...[item.name, item.sno, item.class, item.age, item.sex]);
-        list.push(arr);
-    });
-    let WorkSheet = XLSX.utils.aoa_to_sheet(list);
-    let new_workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(new_workbook, WorkSheet, '第一页');
-    XLSX.writeFile(new_workbook, `表格.xlsx`);
-};
+  tableData.value.map((item: any, i: number) => {
+    const arr: any[] = [i + 1]
+    const feeStatus2 = item.feeStatus == '0' ? '未缴费' : '已缴费'
+    arr.push(
+      ...[
+        item.caseNo,
+        item.departmentName,
+        item.waterFee,
+        item.electricFee,
+        item.total,
+        feeStatus2,
+      ]
+    )
+    list.push(arr)
+  })
+  let WorkSheet = XLSX.utils.aoa_to_sheet(list)
+  let new_workbook = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(new_workbook, WorkSheet, '第一页')
+  XLSX.writeFile(new_workbook, `第${quarter.value}季度小区生活费.xlsx`)
+}
 </script>
 
 <style scoped>
+.quarter {
+  text-align: center;
+  font-size: 22pt;
+  margin-bottom: 5vh;
+}
 .handle-box {
-    margin-bottom: 20px;
+  display: flex;
+  /* justify-content: flex-end; */
+  margin-bottom: 20px;
 }
 
 .handle-select {
-    width: 120px;
+  width: 120px;
 }
 
 .handle-input {
-    width: 300px;
+  width: 300px;
 }
 .table {
-    width: 100%;
-    font-size: 14px;
+  width: 100%;
+  font-size: 14px;
 }
 .red {
-    color: #f56c6c;
+  color: #f56c6c;
 }
 .mr10 {
-    margin-right: 10px;
+  margin-right: 10px;
 }
 .table-td-thumb {
-    display: block;
-    margin: auto;
-    width: 40px;
-    height: 40px;
+  display: block;
+  margin: auto;
+  width: 40px;
+  height: 40px;
 }
 </style>
