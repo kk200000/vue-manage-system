@@ -77,7 +77,7 @@ const handleMany = async () => {
       caseNo: item['单号'],
       departmentName: item['户名'],
       waterFee: item['水费'],
-      electricFee: item['水费'],
+      electricFee: item['电费'],
       total: item['总计'],
       feeStatus: item['缴费状态'],
     }

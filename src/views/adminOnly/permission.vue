@@ -6,8 +6,12 @@
     <div class="mgb20">
       <span class="label">角色：</span>
       <el-select v-model="role" @change="handleChange">
-        <el-option label="管理员" value="admin"></el-option>
-        <el-option label="一般居民" value="user"></el-option>
+        <el-option
+          v-for="(item, index) in RoleList.value"
+          :value="item"
+          :key="index"
+        ></el-option>
+        <!-- <el-option label="一般居民" value="user"></el-option> -->
       </el-select>
     </div>
     <div class="mgb20 tree-wrapper">
@@ -25,14 +29,14 @@
 </template>
 
 <script setup lang="ts" name="permission">
-import { ref } from 'vue'
+import { reactive, ref } from 'vue'
 import { ElTree } from 'element-plus'
 import { usePermissStore } from '@/store/permiss'
 import service from '@/utils/request'
 import { useUserLoginStore } from '@/store/userdata'
 
 const role = ref<string>('admin')
-
+const permissionRoleList = reactive([])
 interface PermissionTree {
   id: string
   label: string
@@ -40,84 +44,50 @@ interface PermissionTree {
 }
 
 const data: PermissionTree[] = [
+  // 左边侧边栏
   {
-    id: '1',
     label: '系统首页',
-  },
-  {
-    id: '2',
-    label: '基础表格',
-    children: [
-      {
-        id: '15',
-        label: '编辑',
-      },
-      {
-        id: '16',
-        label: '删除',
-      },
-    ],
-  },
-  {
-    id: '3',
-    label: 'tab选项卡',
-  },
-  {
-    id: '4',
-    label: '表单相关',
-    children: [
-      {
-        id: '5',
-        label: '基本表单',
-      },
-      {
-        id: '6',
-        label: '文件上传',
-      },
-      {
-        id: '7',
-        label: '三级菜单',
-        children: [
-          {
-            id: '8',
-            label: '富文本编辑器',
-          },
-          {
-            id: '9',
-            label: 'markdown编辑器',
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: '10',
-    label: '自定义图标',
-  },
-  {
-    id: '11',
-    label: 'schart图表',
+    id: '1',
   },
 
   {
-    id: '13',
-    label: '权限管理',
+    label: '停车场',
+    id: '14',
   },
   {
-    id: '14',
-    label: '支持作者',
+    label: '求助管理',
+    id: '15',
+  },
+  {
+    label: '水电费',
+    id: '16',
+  },
+
+  {
+    label: '小区公告',
+    id: '6',
+  },
+
+  {
+    label: '用户中心',
+    id: '2',
+  },
+  {
+    label: '权限管理',
+    id: '18',
   },
 ]
 const userInfo = useUserLoginStore()
 const permiss = usePermissStore()
-
+const RoleList: any = reactive([])
 // 获取当前权限
 const checkedKeys = ref<any>([])
 const getPremission = async () => {
   // call 接口返回权
 
   permiss.getAllpermission()
-  checkedKeys.value = permiss.permissList[role.value]
+  checkedKeys.value = permiss.permissList[role.value] // 拿到本来就选的
+  RoleList.value = Object.keys(permiss.permissList) // 拿到本来的角色列表
 }
 getPremission()
 
@@ -125,17 +95,17 @@ getPremission()
 const tree = ref<InstanceType<typeof ElTree>>()
 
 const onSubmit = async () => {
-  const newList = tree.value!.getCheckedKeys(false)
-
+  const newList: any = tree.value!.getCheckedKeys(false)
+  console.log(newList.value)
   const PermissTree = await service({
     url: '/permission/UpdatePermissionByID',
     method: 'POST',
     data: {
-      role: userInfo.personalInfo.role,
+      role: role.value,
       newList,
     },
   })
-  // 获取选中的权限
+  // 获取用户选中的权限
   tree.value = PermissTree.data.split(',')
 }
 

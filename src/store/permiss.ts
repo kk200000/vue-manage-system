@@ -6,6 +6,7 @@ import lodash from 'lodash'
 export const usePermissStore = defineStore('permiss', {
   state: () => {
     return {
+      isBlock: false,
       rendering: true,
       cureentKeys: [],
       permissList: {
@@ -26,7 +27,11 @@ export const usePermissStore = defineStore('permiss', {
         method: 'POST',
         data: { id: userInfo.personalInfo.id },
       })
-
+      if (permissions.code != 200) {
+        this.isBlock = true
+      } else {
+        this.isBlock = false
+      }
       this.cureentKeys = permissions.data[0].permission.split(',')
       console.log('当前用户权限', this.cureentKeys)
       userInfo.personalInfo.role = permissions.data[0]?.role
@@ -41,15 +46,17 @@ export const usePermissStore = defineStore('permiss', {
       })
 
       // 遍历 permissions.data，并更新 permissList
-      permissions.data.forEach((item) => {
-        if (this.permissList.hasOwnProperty(item.role)) {
-          this.permissList[item.role] = item.permission.split(',')
+      permissions?.data?.forEach((item) => {
+        this.permissList = {
+          ...this.permissList,
+          [item.role]: item.permission.split(','),
         }
       })
+      console.log(this.permissList)
     },
   },
   persist: {
-        key: 'permiss',
-        storage: sessionStorage,
+    key: 'permiss',
+    storage: sessionStorage,
   },
 })

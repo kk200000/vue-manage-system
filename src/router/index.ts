@@ -195,7 +195,10 @@ router.beforeEach((to, from, next) => {
   //   next('/403')
   // }
   else {
-    permiss.getPermissionByID() // 存疑
+    if(!permiss.isBlock){
+      permiss.getPermissionByID() // 存疑
+    }
+   
     next()
   }
 })
