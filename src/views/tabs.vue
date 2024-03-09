@@ -11,16 +11,22 @@
           <el-table-column prop="date" width="180"></el-table-column>
           <el-table-column width="120">
             <template #default="scope">
-              <el-button size="small" @click="handleRead(scope.$index)"
+              <el-button
+                size="small"
+                @click="handleRead(scope.$index)"
+                v-permiss="16"
                 >设为过期</el-button
               >
             </template>
           </el-table-column>
         </el-table>
         <div class="handle-row">
-          <el-button type="primary" @click="markAll">全部标为过期</el-button>
+          <el-button type="primary" @click="markAll" v-permiss="16"
+            >全部标为过期</el-button
+          >
         </div>
       </el-tab-pane>
+
       <el-tab-pane :label="`过期公告(${state.read.length})`" name="second">
         <template v-if="message === 'second'">
           <el-table :data="state.read" :show-header="false" style="width: 100%">
@@ -32,7 +38,10 @@
             <el-table-column prop="date" width="180"></el-table-column>
             <el-table-column width="120">
               <template #default="scope">
-                <el-button type="danger" @click="handleDel(scope.$index)"
+                <el-button
+                  type="danger"
+                  @click="handleDel(scope.$index)"
+                  v-permiss="16"
                   >删除</el-button
                 >
               </template>
@@ -40,7 +49,11 @@
           </el-table>
         </template>
       </el-tab-pane>
-      <el-tab-pane :label="`回收站(${state.recycle.length})`" name="third">
+      <el-tab-pane
+        :label="`回收站(${state.recycle.length})`"
+        name="third"
+        v-permiss="16"
+      >
         <template v-if="message === 'third'">
           <el-table
             :data="state.recycle"
@@ -60,7 +73,9 @@
             </el-table-column>
           </el-table>
           <div class="handle-row">
-            <el-button type="danger" @click="clearBin">清空回收站</el-button>
+            <el-button type="danger" @click="clearBin" v-permiss="16"
+              >清空回收站</el-button
+            >
           </div>
         </template>
       </el-tab-pane>

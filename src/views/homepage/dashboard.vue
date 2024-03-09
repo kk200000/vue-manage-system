@@ -2,7 +2,7 @@
   <div>
     <el-row :gutter="20">
       <el-col :span="8">
-        <el-card shadow="hover" class="mgb20" style="height: 252px">
+        <el-card shadow="hover" style="height: 252px">
           <div class="user-info">
             <el-avatar :size="120" :src="imgurl" />
             <div class="user-info-cont">
@@ -22,8 +22,20 @@
       </el-col>
 
       <el-col :span="16">
-        <el-card shadow="hover" class="mgb20" style="height: 252px">
-          <div>XXX小区欢迎您</div>
+        <el-card
+          shadow="hover"
+          :body-style="{ padding: '0' }"
+          style="height: 300px"
+        >
+          <el-carousel :interval="3500" arrow="always">
+            <el-carousel-item v-for="item in imageList" :key="item">
+              <el-image
+                style="width: 100%; height: 100%"
+                :src="item"
+                fit="fill"
+              />
+            </el-carousel-item>
+          </el-carousel>
         </el-card>
       </el-col>
     </el-row>
@@ -60,7 +72,11 @@ const role: string = username === 'admin' ? '超级管理员' : '普通用户'
 
 const lineChart = ref(null)
 const barChart = ref(null)
-
+const imageList = [
+  'src/assets/img/view1.jpg',
+  'src/assets/img/view2.jpg',
+  'src/assets/img/view3.jpg',
+]
 onMounted(() => {
   initBarChart()
   initLineChart()
