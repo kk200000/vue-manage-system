@@ -15,7 +15,20 @@
         <el-button type="primary" :icon="Plus" @click="AddVisible = true"
           >新增</el-button
         >
+
         <span class="tips">TIPS:每小时停车费: ￥{{ perHourFee }}</span>
+        <el-select
+          v-model="perHourFee"
+          placeholder="Select"
+          size="large"
+          style="width: 240px"
+        >
+          <el-option
+            v-for="item in [13.5, 14.5, 15.5]"
+            :key="item"
+            :value="item"
+          />
+        </el-select>
       </div>
 
       <el-table

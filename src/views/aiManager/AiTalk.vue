@@ -7,9 +7,11 @@
       type="textarea"
       placeholder="请输入你想说的"
     />
+    
     <!-- 聊天记录 -->
     <el-input
       class="min-h-full"
+      :autosize="{ minRows: 6 }"
       readonly
       v-model="AIMeassage"
       rows="10"
@@ -36,7 +38,11 @@ onMounted(() => {
 })
 
 const submitEvent = async () => {
-  let res = await service({ url: `/getAnswer/${HumanMessage.value}` })
+  let res = await service({
+    url: `/getAnswer`,
+    method: 'POST',
+    data: { userMessage: HumanMessage.value },
+  })
   AIMeassage.value = res.data
 }
 

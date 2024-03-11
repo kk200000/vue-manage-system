@@ -121,7 +121,7 @@
 </template>
 
 <script setup lang="ts" name="user">
-import { onMounted, reactive, ref } from 'vue'
+import { onMounted, onUpdated, reactive, ref } from 'vue'
 import VueCropper from 'vue-cropperjs'
 import 'cropperjs/dist/cropper.css'
 import avatar from '../assets/img/img.jpg'
@@ -149,7 +149,7 @@ const pwdform = reactive({
   newPwd: '',
 })
 const form = reactive({
-  gender: '男',
+  gender: '',
   unitNumber: '',
   buildingNumber: '',
   doorNumber: '',
@@ -176,6 +176,7 @@ const updateProfile = async () => {
 
   if (res.code == 200) {
     ElMessage.success(res.msg)
+    userInfo.getUserData()
   } else {
     ElMessage.info(res.msg)
   }

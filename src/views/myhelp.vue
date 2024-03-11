@@ -1,10 +1,6 @@
 <template>
   <div>
     <div class="container">
-      <div class="handle-box">
-        <el-link href="/template.xlsx" target="_blank">下载模板</el-link>
-      </div>
-
       <!-- 维修展示 -->
       <el-table
         :data="tableData"
@@ -135,6 +131,7 @@ import * as XLSX from 'xlsx'
 import { useUserLoginStore } from '@/store/userdata'
 import { formatDateForList } from '@/utils/day'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import lodash from 'lodash'
 
 const userInfo = useUserLoginStore()
 
@@ -192,15 +189,21 @@ const getDataByID = async () => {
   formatDateForList(tableData.value, 'SelectedDateTime')
 }
 
-const getDataByRole = () => {
-  if (userInfo.personalInfo.role == 'admin') getData()
+const getDataByRole = async () => {
+  if (userInfo.personalInfo.role == 'admin') await getData()
   else {
-    getDataByID()
+    await getDataByID()
   }
 }
 // 初始根据角色获取列表
-onMounted(() => {
-  getDataByRole()
+onMounted(async () => {
+  await getDataByRole()
+  tableData.value.forEach((item) => {
+    if (lodash.isEmpty(item.title)) {
+      item.title = '-'
+    }
+  })
+  console.log(tableData.value)
 })
 
 // 表格编辑时弹窗和保存

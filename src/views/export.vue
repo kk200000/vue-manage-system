@@ -11,10 +11,31 @@
           :before-upload="beforeUpload"
           :http-request="handleMany"
         >
-          <el-button class="mr10" type="success">批量导入</el-button>
+          <el-button class="mr10" type="success" v-permiss="16"
+            >批量导入</el-button
+          >
         </el-upload>
         <el-button type="primary" @click="exportXlsx">导出Excel</el-button>
-        <el-button type="danger" @click="clearData">删除年度数据</el-button>
+        <el-button type="danger" @click="clearData" v-permiss="16"
+          >删除数据</el-button
+        >
+
+        <el-select
+          style="margin-left: 55vw"
+          placeholder="选择季度"
+          v-model="quarter"
+          @change="changeQuarter"
+        >
+          <template #prefix>
+            <span>季度：</span>
+          </template>
+          <el-option
+            v-for="item in [1, 2, 3, 4]"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
       </div>
       <el-table
         :data="tableData"
@@ -73,7 +94,7 @@ const handleMany = async () => {
   // 把数据传给服务器后获取最新列表，这里只是示例，不做请求
   const list = importList.value.map((item: any, index: number) => {
     return {
-      id: index,
+      id: item['户号'],
       caseNo: item['单号'],
       departmentName: item['户名'],
       waterFee: item['水费'],
@@ -82,7 +103,21 @@ const handleMany = async () => {
       feeStatus: item['缴费状态'],
     }
   })
-  tableData.value.push(...list)
+  const res = await service({
+    url: '/fee/addList?quarter=' + quarter.value,
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: JSON.stringify(list),
+  })
+  if (res.code == 200) {
+    tableData.value.push(...list)
+    ElMessage.success(res.msg)
+    getDataByRole()
+  } else {
+    ElMessage.error(res.msg)
+  }
 }
 
 const quarter = ref(1) // 第几季度
@@ -102,6 +137,10 @@ const getData = async () => {
   })
   tableData.value = res.data || []
 }
+const role = userInfo.personalInfo.role
+const changeQuarter = () => {
+  getDataByRole()
+}
 // 用户获取数据
 const getDataByID = async () => {
   const res = await service({
@@ -109,6 +148,7 @@ const getDataByID = async () => {
     method: 'POST',
     data: {
       id: userInfo.personalInfo.id,
+      quarter: quarter.value,
     },
   })
   tableData.value = res.data || []
@@ -122,6 +162,9 @@ const clearData = async () => {
     const res = await service({
       url: '/fee/removeAll',
       method: 'DELETE',
+      data:{
+        quarter: quarter.value,
+      }
     })
     if (res.code == 200) {
       ElMessage.success(res.msg)

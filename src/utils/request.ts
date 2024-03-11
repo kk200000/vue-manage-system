@@ -4,8 +4,10 @@ import { ElMessage } from 'element-plus'
 
 const service: AxiosInstance = axios.create({
   baseURL: 'http://127.0.0.1:5000/',
-  timeout: 1000,
+  timeout: 10000,
+  timeoutErrorMessage: '请求超时,请再试一次!',
 })
+
 // 请求拦截
 service.interceptors.request.use(
   (config: AxiosRequestConfig) => {

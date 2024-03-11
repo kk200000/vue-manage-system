@@ -25,7 +25,7 @@
         <el-card
           shadow="hover"
           :body-style="{ padding: '0' }"
-          style="height: 300px"
+          style="height: 252px"
         >
           <el-carousel :interval="3500" arrow="always">
             <el-carousel-item v-for="item in imageList" :key="item">

@@ -31,10 +31,11 @@ export const usePermissStore = defineStore('permiss', {
         this.isBlock = true
       } else {
         this.isBlock = false
+        this.cureentKeys = permissions.data[0].permission.split(',')
+        console.log('当前用户权限', this.cureentKeys)
+        userInfo.personalInfo.role = permissions.data[0]?.role
       }
-      this.cureentKeys = permissions.data[0].permission.split(',')
-      console.log('当前用户权限', this.cureentKeys)
-      userInfo.personalInfo.role = permissions.data[0]?.role
+
       this.rendering = false
     },
 
@@ -52,7 +53,6 @@ export const usePermissStore = defineStore('permiss', {
           [item.role]: item.permission.split(','),
         }
       })
-      console.log(this.permissList)
     },
   },
   persist: {

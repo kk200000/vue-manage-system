@@ -76,7 +76,6 @@ const handleCommand = (command: string) => {
     localStorage.removeItem('username')
     localStorage.removeItem('token')
     localStorage.removeItem('role')
-    permiss.key = ''
     router.push('/login')
   } else if (command == 'user') {
     router.push('/user')
