@@ -25,11 +25,11 @@ import { usePermissStore } from './store/permiss'
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
 }
-// 自定义权限指令
+
 const permiss = usePermissStore()
 const token = localStorage.getItem('token')
 
-
+// 自定义权限指令v-permiss
 app.directive('permiss', {
   mounted(el, binding) {
     // 如果权限不在配置表里，就设置 该元素隐藏起来

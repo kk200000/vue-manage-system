@@ -65,7 +65,10 @@ const data: PermissionTree[] = [
     label: '水电费',
     permiss: '16',
   },
-
+  {
+    label: 'AI管家',
+    permiss: '5',
+  },
   {
     label: '小区公告',
     permiss: '6',

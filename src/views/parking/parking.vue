@@ -22,6 +22,7 @@
           placeholder="Select"
           size="large"
           style="width: 240px"
+          v-permiss="17"
         >
           <el-option
             v-for="item in [13.5, 14.5, 15.5]"

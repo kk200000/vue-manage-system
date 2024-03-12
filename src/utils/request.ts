@@ -4,10 +4,9 @@ import { ElMessage } from 'element-plus'
 
 const service: AxiosInstance = axios.create({
   baseURL: 'http://127.0.0.1:5000/',
-  timeout: 10000,
+  timeout: 15000,
   timeoutErrorMessage: '请求超时,请再试一次!',
 })
-
 // 请求拦截
 service.interceptors.request.use(
   (config: AxiosRequestConfig) => {
@@ -38,6 +37,13 @@ service.interceptors.response.use(
     }
   },
   (error: AxiosError) => {
+    if (error.code === 'ECONNABORTED' || error.message.includes('超时')) {
+      // 处理超时的逻辑
+      ElMessage.error('请求超时,请检查key或稍后再试!')
+    }
+
+    // 可以在这里添加更多的错误处理逻辑
+
     return Promise.reject(error)
   }
 )

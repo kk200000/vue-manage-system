@@ -32,7 +32,12 @@ export const LeftSiderBarAdmin = [
     title: '小区公告',
     permiss: '6',
   },
-
+  {
+    icon: 'Umbrella',
+    index: '/AITalk',
+    title: 'AI管家',
+    permiss: '5',
+  },
   {
     icon: 'Setting',
     index: '/user',
