@@ -5,12 +5,14 @@ import { ElMessage } from 'element-plus'
 const service: AxiosInstance = axios.create({
   baseURL: 'http://127.0.0.1:5000/',
   timeout: 15000,
-  timeoutErrorMessage: '请求超时,请再试一次!',
+  withCredentials: true,
+  xsrfCookieName: 'session',
 })
 // 请求拦截
 service.interceptors.request.use(
   (config: AxiosRequestConfig) => {
     const newConfig = config
+    newConfig.withCredentials = true
     // 添加 token
     newConfig.headers['token'] = localStorage.getItem('token') || ''
     return newConfig

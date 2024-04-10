@@ -50,7 +50,7 @@
               text
               :icon="Edit"
               @click="handleEdit(scope.$index, scope.row)"
-              v-permiss="15"
+              v-permiss="8"
             >
               编辑
             </el-button>
@@ -59,13 +59,26 @@
               :icon="Delete"
               class="red"
               @click="handleDelete(scope.row, scope.$index)"
-              v-permiss="17"
+              v-permiss="8"
             >
               删除
             </el-button>
           </template>
         </el-table-column>
       </el-table>
+      <div class="pagination">
+        <el-pagination
+          background
+          layout="total, prev, pager, next"
+          :current-page="pagination.currentPage"
+          :page-size="pagination.pageSize"
+          :total="totalSize"
+          @current-change="handlePageChange"
+        ></el-pagination>
+      </div>
+      <el-button style="margin-top: 5vh" v-permiss="8" @click="NewHelp">
+        我要求助
+      </el-button>
 
       <!-- 编辑弹出框 -->
       <el-dialog title="编辑" v-model="editVisible" width="40%">
@@ -132,17 +145,39 @@ import { useUserLoginStore } from '@/store/userdata'
 import { formatDateForList } from '@/utils/day'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import lodash from 'lodash'
+import { useRouter } from 'vue-router'
 
 const userInfo = useUserLoginStore()
-
+const router = useRouter()
+const allList = reactive<any>([])
 const tableData = ref([])
+const totalSize = ref(0)
+const pagination = reactive<any>({
+  currnetPage: 1, // 当前页数
+  pageSize: 7, // 每页多少个
+})
+
+// 前端分页-切割数据
+const paging = () => {
+  // 起始位置 = (当前页 - 1) x 每页的大小
+  const start = (pagination.currnetPage - 1) * pagination.pageSize
+  // 结束位置 = 当前页 x 每页的大小
+  const end = pagination.currnetPage * pagination.pageSize
+  tableData.value = allList.value.slice(start, end)
+}
+
 // 管理员获取表格数据
 const getData = async () => {
   const res = await service({ url: '/help/getList', method: 'GET' })
+  totalSize.value = res.data.length || 0
+  allList.value = res.data || []
+  formatDateForList(allList.value, 'SelectedDateTime') // 格式化时间
+  paging()
+}
 
-  tableData.value = res.data || []
-  // 格式化时间
-  formatDateForList(tableData.value, 'SelectedDateTime')
+const handlePageChange = (val: number) => {
+  pagination.currnetPage = val
+  getData()
 }
 
 // 管理员点完成
@@ -173,6 +208,11 @@ const handleDelete = async (item, index) => {
       ElMessage.error('删除失败')
     }
   })
+}
+
+// 求助发起
+const NewHelp = () => {
+  router.push('form')
 }
 
 // 用户获取数据

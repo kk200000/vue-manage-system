@@ -88,13 +88,13 @@ const analysisExcel = (file: any) => {
   })
 }
 onMounted(() => {
-  getData()
+  getDataByRole()
 })
+
 const handleMany = async () => {
-  // 把数据传给服务器后获取最新列表，这里只是示例，不做请求
   const list = importList.value.map((item: any, index: number) => {
     return {
-      id: item['户号'],
+      id: item['序号'],
       caseNo: item['单号'],
       departmentName: item['户名'],
       waterFee: item['水费'],
@@ -162,9 +162,9 @@ const clearData = async () => {
     const res = await service({
       url: '/fee/removeAll',
       method: 'DELETE',
-      data:{
+      data: {
         quarter: quarter.value,
-      }
+      },
     })
     if (res.code == 200) {
       ElMessage.success(res.msg)

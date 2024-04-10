@@ -11,24 +11,24 @@ export const LeftSiderBarAdmin = [
     icon: 'Van',
     index: '/parking',
     title: '车辆管理',
-    permiss: '14',
+    permiss: '3',
   },
   {
     icon: 'Phone',
     index: '/myhelp',
     title: '求助管理',
-    permiss: '15',
+    permiss: '8',
   },
   {
     icon: 'Stamp',
-    index: '/export',
+    index: '/fees',
     title: '导入水电费',
-    permiss: '16',
+    permiss: '17',
   },
 
   {
     icon: 'DocumentCopy',
-    index: '/tabs',
+    index: '/notice',
     title: '小区公告',
     permiss: '6',
   },
@@ -63,7 +63,7 @@ export const LeftSiderBarUser = [
     icon: 'Calendar',
     index: '1',
     title: '居民生活',
-    permiss: '2',
+    permiss: '1',
     subs: [
       {
         index: '/parking',
@@ -74,57 +74,27 @@ export const LeftSiderBarUser = [
       {
         index: '/AITalk',
         title: 'AI管家',
-        permiss: '5',
+        permiss: '4',
       },
       {
-        index: '/export',
+        index: '/fees',
         title: '生活费用',
-        permiss: '4',
+        permiss: '5',
       },
     ],
   },
 
   {
     icon: 'DocumentCopy',
-    index: '/tabs',
+    index: '/notice',
     title: '小区公告消息',
     permiss: '6',
   },
   {
     icon: 'Edit',
-    index: '3',
-    title: '维修申请',
-    permiss: '7',
-    subs: [
-      {
-        index: '/form',
-        title: '填写维修单',
-        permiss: '8',
-      },
-      {
-        index: '/myhelp',
-        title: '我的维修',
-        permiss: '8',
-      },
-
-      // {
-      //   index: '4',
-      //   title: '与我有关',
-      //   permiss: '7',
-      //   subs: [
-      //     {
-      //       index: '/editor',
-      //       title: '我参与的',
-      //       permiss: '8',
-      //     },
-      //     {
-      //       index: '/markdown',
-      //       title: '历史活动',
-      //       permiss: '9',
-      //     },
-      //   ],
-      // },
-    ],
+    index: '/myhelp',
+    title: '我的维修',
+    permiss: '8',
   },
   {
     icon: 'Setting',

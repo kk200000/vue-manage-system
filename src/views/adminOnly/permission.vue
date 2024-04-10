@@ -19,6 +19,7 @@
         :data="data"
         node-key="permiss"
         default-expand-all
+        auto-expand-parent
         show-checkbox
         :default-checked-keys="checkedKeys"
       />
@@ -29,10 +30,11 @@
 
 <script setup lang="ts" name="permission">
 import { onMounted, reactive, ref } from 'vue'
-import { ElTree } from 'element-plus'
+import { ElMessage, ElTree } from 'element-plus'
 import { usePermissStore } from '@/store/permiss'
 import service from '@/utils/request'
 import { useUserLoginStore } from '@/store/userdata'
+import { LeftSiderBarAdmin, LeftSiderBarUser } from '@/components/siderbarTitle'
 
 onMounted(() => {
   getPremission()
@@ -40,13 +42,8 @@ onMounted(() => {
 
 const role = ref<string>('admin')
 const permissionRoleList = reactive([])
-interface PermissionTree {
-  permiss: string
-  label: string
-  children?: PermissionTree[]
-}
 
-const data: PermissionTree[] = [
+let data: any = [
   // 左边侧边栏
   {
     label: '系统首页',
@@ -55,15 +52,15 @@ const data: PermissionTree[] = [
 
   {
     label: '停车场',
-    permiss: '14',
+    permiss: '3',
   },
   {
     label: '求助管理',
-    permiss: '15',
+    permiss: '8',
   },
   {
-    label: '水电费',
-    permiss: '16',
+    label: '生活费用',
+    permiss: '4',
   },
   {
     label: 'AI管家',
@@ -82,6 +79,7 @@ const data: PermissionTree[] = [
     label: '权限管理',
     permiss: '18',
   },
+  
 ]
 const userInfo = useUserLoginStore()
 const permiss = usePermissStore()
@@ -111,9 +109,25 @@ const onSubmit = async () => {
   })
   // 获取用户选中的权限
   tree.value = PermissTree.data.split(',')
+  if (PermissTree.code == 200) {
+    ElMessage.success(PermissTree.msg)
+    setTimeout(() => {
+      history.go(0)
+    }, 800)
+  } else {
+    ElMessage.error(PermissTree.msg)
+  }
 }
 
 const handleChange = () => {
+  // if (role.value == 'admin') {
+  //   // tree.value!.updateKeyChildren('admin', LeftSiderBarAdmin)
+  //   data = LeftSiderBarAdmin
+  // } else if (role.value == 'user') {
+  //   // tree.value!.updateKeyChildren('user', LeftSiderBarUser)
+  //   data = LeftSiderBarUser
+  // }
+
   tree.value!.setCheckedKeys(permiss.permissList[role.value])
 }
 </script>

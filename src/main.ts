@@ -17,6 +17,7 @@ store.use(piniaPluginPersistedstate)
 app.use(store)
 app.use(router)
 app.provide('$axios', service)
+service.defaults.withCredentials = true
 app.config.globalProperties.$axios = service //配置axios的全局引用
 configureAxios(router) //  配置 Axios 实例并传递路由实例 初始化axios在pinia
 

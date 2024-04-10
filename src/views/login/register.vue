@@ -59,9 +59,37 @@
           </el-radio-group>
         </el-form-item>
 
+        <el-form-item label="验证码" prop="captcha" required>
+          <template #label>
+            <span class="FormItemLabel">验证码</span>
+          </template>
+          <el-input
+            type="text"
+            v-model="param.captcha"
+            :maxlength="4"
+            placeholder="请输入验证码"
+          >
+            <template #append>
+              <el-button type="text" @click="refreshCaptcha"
+                >刷新验证码</el-button
+              >
+            </template>
+          </el-input>
+          <img style="margin: 10px auto; margin-bottom: 0" :src="captchaUrl" />
+        </el-form-item>
+
         <div class="register-btn">
           <el-button type="primary" @click="submitForm(register)"
             >注册</el-button
+          >
+          <el-button
+            type="primary"
+            @click="
+              () => {
+                router.go(-1)
+              }
+            "
+            >返回上一层</el-button
           >
         </div>
       </el-form>
@@ -89,6 +117,7 @@ interface RegisterInfo {
   phone: string
   communityName: string
   role: string
+  captcha: string
   // avatar_path: string
   // faceInfo_path: string
 }
@@ -102,6 +131,7 @@ const param = reactive<RegisterInfo>({
   phone: '13450209670',
   role: 'user',
   communityName: '默认1',
+  captcha: '',
 })
 const getRoleByName = (username: any) => {
   return lodash.includes(username, 'admin') ? 'admin' : 'user'
@@ -117,7 +147,23 @@ function resizeCanvas() {
 const AnimationValue = 'reflectRain'
 let animationInstance: any = null
 const canvas = ref(null)
+const captchaUrl = ref(null) // 登录验证码
+// 请求验证码
+const requestCaptcha = async () => {
+  const response: any = await service({
+    url: '/captcha',
+    method: 'POST',
+  })
+  captchaUrl.value = response
+}
+
+// 刷新验证码
+const refreshCaptcha = () => {
+  requestCaptcha()
+}
+
 onMounted(() => {
+  requestCaptcha() // 请求验证码
   canvas.value = document.getElementById('login-background')
   import(`../../utils/Animation/canvasAnimation/sparkRain/index`).then(
     (_) => (animationInstance = new _.default(canvas.value))
@@ -194,6 +240,7 @@ const submitForm = (formEl: FormInstance) => {
   padding: 30px 30px;
 }
 .register-btn {
+  display: flex;
   text-align: center;
 }
 .register-btn button {

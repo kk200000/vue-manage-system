@@ -9,7 +9,7 @@
     <div class="header-right">
       <div class="header-user-con">
         <!-- 消息中心 -->
-        <div class="btn-bell" @click="router.push('/tabs')">
+        <div class="btn-bell" @click="router.push('/notice')">
           <el-tooltip
             effect="dark"
             :content="message ? `有${message}条未读消息` : `消息中心`"
@@ -53,7 +53,7 @@ import { usePermissStore } from '@/store/permiss'
 const permiss = usePermissStore()
 const userInfo = useUserLoginStore()
 const username: string | null = localStorage.getItem('username')
-const message: number = 2
+const message: number = 1
 const headerTitle = localStorage.getItem('role')
   ? `${username},欢迎回来!`
   : `超级管理员 ${username} 你好!`

@@ -33,6 +33,22 @@
             </template>
           </el-input>
         </el-form-item>
+        <el-form-item prop="captcha">
+          <el-input
+            type="text"
+            v-model="param.captcha"
+            :maxlength="4"
+            placeholder="请输入验证码"
+          >
+            <template #append>
+              <el-button type="text" @click="refreshCaptcha"
+                >刷新验证码</el-button
+              >
+            </template>
+          </el-input>
+          <img style="margin: 10px auto; margin-bottom: 0" :src="captchaUrl" />
+        </el-form-item>
+
         <!-- 按钮组 -->
         <div class="login-btn">
           <el-button type="primary" @click="submitForm(login)">登录</el-button>
@@ -69,6 +85,7 @@ function resizeCanvas() {
 interface LoginInfo {
   username: string
   password: string
+  captcha: string
 }
 
 const router = useRouter()
@@ -76,6 +93,7 @@ const router = useRouter()
 const param = reactive<LoginInfo>({
   username: 'admin1',
   password: '123',
+  captcha: '',
 })
 const navToRegister = () => {
   router.push('/register')
@@ -85,7 +103,22 @@ const AnimationValue = 'reflectRain'
 let animationInstance: any = null
 const canvas = ref(null)
 
+const captchaUrl = ref(null) // 登录验证码
+// 请求验证码
+const requestCaptcha = async () => {
+  const response: any = await service({
+    url: '/captcha',
+    method: 'POST',
+  })
+  captchaUrl.value = response
+}
+
+// 刷新验证码
+const refreshCaptcha = () => {
+  requestCaptcha()
+}
 onMounted(() => {
+  requestCaptcha() // 请求验证码
   canvas.value = document.getElementById('login-background')
   import(`../../utils/Animation/canvasAnimation/sparkRain/index`).then(
     (_) => (animationInstance = new _.default(canvas.value))

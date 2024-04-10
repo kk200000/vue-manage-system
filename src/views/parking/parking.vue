@@ -64,7 +64,9 @@
         </el-table-column>
         <el-table-column label="停车消费" align="center">
           <template #default="scope"
-            >￥{{ scope.row.parkingDuration * perHourFee }}</template
+            >￥{{
+              (scope.row.parkingDuration * perHourFee).toFixed(2)
+            }}</template
           >
         </el-table-column>
         <el-table-column prop="lastTime" label="入/出库时间"></el-table-column>
@@ -75,7 +77,7 @@
               text
               :icon="VideoPlay"
               @click="handleInAndOut(scope.row)"
-              v-permiss="15"
+              :disabled="!(scope.row.ownerID === userInfo.personalInfo.id)"
             >
               {{ scope.row.status == 1 ? '出库' : '入库' }}
             </el-button>
@@ -84,7 +86,7 @@
               text
               :icon="Edit"
               @click="handleEdit(scope.$index, scope.row)"
-              v-permiss="15"
+              :disabled="!(scope.row.ownerID === userInfo.personalInfo.id)"
             >
               编辑
             </el-button>
@@ -93,7 +95,7 @@
               :icon="Delete"
               class="red"
               @click="handleDelete(scope.row, scope.$index)"
-              v-permiss="16"
+              :disabled="!(scope.row.ownerID === userInfo.personalInfo.id)"
             >
               删除
             </el-button>
@@ -102,11 +104,12 @@
       </el-table>
       <div class="pagination">
         <el-pagination
+          hide-on-single-page
           background
           layout="total, prev, pager, next"
-          :current-page="query.pageIndex"
+          :current-page="query.currnetPage"
           :page-size="query.pageSize"
-          :total="pageTotal"
+          :total="totalSize"
           @current-change="handlePageChange"
         ></el-pagination>
       </div>
@@ -146,13 +149,13 @@
     <!-- 新增弹出框 -->
     <el-dialog title="新增" v-model="AddVisible" width="30%">
       <el-form label-width="70px">
-        <el-form-item label="车牌号">
+        <el-form-item label="车牌号" required>
           <el-input v-model="Addform.carNumber"></el-input>
         </el-form-item>
-        <el-form-item label="型号">
+        <el-form-item label="型号" required>
           <el-input v-model="Addform.carName"></el-input>
         </el-form-item>
-        <el-form-item label="车位">
+        <el-form-item label="车位" required>
           <el-input v-model="Addform.parkingNumber"></el-input>
         </el-form-item>
         <el-form-item label="状态">
@@ -183,31 +186,43 @@ import service from '@/utils/request'
 import { formatDate } from '@/utils/day'
 import { useUserLoginStore } from '@/store/userdata'
 
+import { useRouter } from 'vue-router'
+const router = useRouter()
 const userInfo = useUserLoginStore()
 const perHourFee = ref(13.5)
+let allList = reactive<any>([])
+let tableData: any = ref([])
+
 const query = reactive({
   carNumber: '',
   carName: '',
-  pageIndex: 1,
-  pageSize: 10,
+  currnetPage: 1, // 当前页数
+  pageSize: 2, // 每页多少个
 })
-const tableData: any = ref([])
-const pageTotal = ref(0)
+const totalSize = ref(0) // 总共多少个数据
+// 前端分页-切割数据
+const paging = () => {
+  // 起始位置 = (当前页 - 1) x 每页的大小
+  const start = (query.currnetPage - 1) * query.pageSize
+  // 结束位置 = 当前页 x 每页的大小
+  const end = query.currnetPage * query.pageSize
+  tableData.value = allList.value.slice(start, end)
+}
+
 // 获取表格数据
 const getParkingData = () => {
   service({
     url: '/parking/getCurrentParkingList',
     method: 'GET',
   }).then((res) => {
-    tableData.value = res.data.list
+    totalSize.value = res.data.totalSize
+    allList.value = res.data.list
+    paging()
     // 格式化时间
     tableData.value.forEach((element) => {
       const lastTime = formatDate(element.lastTime, 'YYYY-MM-DD HH:mm:ss')
-
       element.lastTime = lastTime
     })
-
-    pageTotal.value = res.data.pageTotal || 50
   })
 }
 getParkingData()
@@ -249,14 +264,14 @@ const handleSearch = () => {
       (item) => item.carNumber.includes(query.carNumber) // 假设车牌号字段是 carNumber
     )
     tableData.value = list
-    query.pageIndex = 1
+    query.currnetPage = 1
   } else {
     getParkingData()
   }
 }
 // 分页导航
 const handlePageChange = (val: number) => {
-  query.pageIndex = val
+  query.currnetPage = val
   getParkingData()
 }
 
@@ -289,23 +304,38 @@ const handleInAndOut = async (item) => {
   if (NeedOut) {
     // 缴费
     ElMessageBox.confirm(
-      `请缴费${item.parkingDuration * perHourFee.value}元`,
+      `请缴费${(item.parkingDuration * perHourFee.value).toFixed(2)}元`,
       '谢谢光临~',
       {
+        confirmButtonText: '去支付',
+        cancelButtonText: '取消',
         type: 'success',
       }
-    ).then()
+    ).then(async () => {
+      ElMessage.success(`欢迎${item.carNumber} 下次光临~`)
+      const res = await service({
+        url: '/parking/UpdateCurrentParkingList',
+        method: 'POST',
+        data: {
+          carNumber: item.carNumber,
+          flag,
+          parkingNumber: item?.parkingNumber,
+        },
+      })
+      router.go(0)
+    })
+  } else {
+    ElMessage.success(`欢迎${item.carNumber} 进场~`)
+    const res = await service({
+      url: '/parking/UpdateCurrentParkingList',
+      method: 'POST',
+      data: {
+        carNumber: item.carNumber,
+        flag,
+        parkingNumber: item?.parkingNumber,
+      },
+    })
   }
-
-  const res = await service({
-    url: '/parking/UpdateCurrentParkingList',
-    method: 'POST',
-    data: {
-      carNumber: item.carNumber,
-      flag,
-      parkingNumber: item?.parkingNumber,
-    },
-  })
 
   getParkingData()
 }

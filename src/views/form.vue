@@ -65,11 +65,13 @@ import { ElMessage } from 'element-plus'
 import type { FormInstance, FormRules } from 'element-plus'
 import { useUserLoginStore } from '@/store/userdata'
 import service from '@/utils/request'
+import { useRouter } from 'vue-router'
+
 
 const rules: FormRules = {
   //   name: [{ required: true, message: '请输入表单名称', trigger: 'blur' }],
 }
-
+const router = useRouter()
 const userInfo = useUserLoginStore()
 const getUserHome = computed(() => {
   return [
@@ -108,8 +110,11 @@ const onSubmit = (formEl: FormInstance | undefined) => {
           CreatorID: userInfo.personalInfo.id,
         },
       })
-      console.log(res)
+
       ElMessage.success('提交成功！')
+      setTimeout(() => {
+        router.push('/myhelp')
+      }, 1500)
     } else {
       return false
     }
