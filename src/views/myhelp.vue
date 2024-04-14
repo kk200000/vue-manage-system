@@ -41,7 +41,7 @@
               text
               :icon="VideoPlay"
               @click="handleFinish(scope.row)"
-              v-permiss="17"
+              v-permiss="61"
             >
               完成
             </el-button>
@@ -50,7 +50,7 @@
               text
               :icon="Edit"
               @click="handleEdit(scope.$index, scope.row)"
-              v-permiss="8"
+              v-permiss="61"
             >
               编辑
             </el-button>
@@ -59,7 +59,7 @@
               :icon="Delete"
               class="red"
               @click="handleDelete(scope.row, scope.$index)"
-              v-permiss="8"
+              v-permiss="61"
             >
               删除
             </el-button>
@@ -76,7 +76,7 @@
           @current-change="handlePageChange"
         ></el-pagination>
       </div>
-      <el-button style="margin-top: 5vh" v-permiss="8" @click="NewHelp">
+      <el-button style="margin-top: 5vh" v-permiss="60" @click="NewHelp">
         我要求助
       </el-button>
 

@@ -12,7 +12,11 @@
         <el-button type="primary" :icon="Search" @click="handleSearch"
           >搜索</el-button
         >
-        <el-button type="primary" :icon="Plus" @click="AddVisible = true"
+        <el-button
+          type="primary"
+          :icon="Plus"
+          @click="AddVisible = true"
+          v-permiss="20"
           >新增</el-button
         >
 
@@ -78,6 +82,7 @@
               :icon="VideoPlay"
               @click="handleInAndOut(scope.row)"
               :disabled="!(scope.row.ownerID === userInfo.personalInfo.id)"
+              v-permiss="20"
             >
               {{ scope.row.status == 1 ? '出库' : '入库' }}
             </el-button>
@@ -87,6 +92,7 @@
               :icon="Edit"
               @click="handleEdit(scope.$index, scope.row)"
               :disabled="!(scope.row.ownerID === userInfo.personalInfo.id)"
+              v-permiss="20"
             >
               编辑
             </el-button>
@@ -96,6 +102,7 @@
               class="red"
               @click="handleDelete(scope.row, scope.$index)"
               :disabled="!(scope.row.ownerID === userInfo.personalInfo.id)"
+              v-permiss="20"
             >
               删除
             </el-button>

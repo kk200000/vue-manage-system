@@ -19,6 +19,7 @@
         :data="data"
         node-key="permiss"
         default-expand-all
+        :check-strictly="true"
         auto-expand-parent
         show-checkbox
         :default-checked-keys="checkedKeys"
@@ -53,14 +54,48 @@ let data: any = [
   {
     label: '停车场',
     permiss: '3',
+    children: [
+      {
+        label: '修改费用',
+        permiss: '17',
+      },
+      {
+        label: '操作车辆',
+        permiss: '20',
+      },
+    ],
   },
   {
     label: '求助管理',
     permiss: '8',
+    children: [
+      {
+        label: '我要求助',
+        permiss: '60',
+      },
+      {
+        label: '操作求助',
+        permiss: '61',
+      },
+    ],
   },
   {
     label: '生活费用',
     permiss: '4',
+    children: [
+      {
+        label: '导入居民费用',
+        permiss: '70',
+      },
+      {
+        label: '导出居民费用',
+        permiss: '71',
+      },
+      {
+        label: '删除数据',
+        permiss: '72',
+      },
+    ],
   },
   {
     label: 'AI管家',
@@ -69,6 +104,16 @@ let data: any = [
   {
     label: '小区公告',
     permiss: '6',
+    children: [
+      {
+        label: '创建公告',
+        permiss: '31',
+      },
+      {
+        label: '操作公告',
+        permiss: '16',
+      },
+    ],
   },
 
   {
@@ -79,7 +124,6 @@ let data: any = [
     label: '权限管理',
     permiss: '18',
   },
-  
 ]
 const userInfo = useUserLoginStore()
 const permiss = usePermissStore()
