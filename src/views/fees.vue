@@ -11,12 +11,14 @@
           :before-upload="beforeUpload"
           :http-request="handleMany"
         >
-          <el-button class="mr10" type="success" v-permiss="16"
+          <el-button class="mr10" type="success" v-permiss="70"
             >批量导入</el-button
           >
         </el-upload>
-        <el-button type="primary" @click="exportXlsx">导出Excel</el-button>
-        <el-button type="danger" @click="clearData" v-permiss="16"
+        <el-button type="primary" @click="exportXlsx" v-permiss="71"
+          >导出Excel</el-button
+        >
+        <el-button type="danger" @click="clearData" v-permiss="72"
           >删除数据</el-button
         >
 
