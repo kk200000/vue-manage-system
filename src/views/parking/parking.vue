@@ -27,6 +27,7 @@
           size="large"
           style="width: 240px"
           v-permiss="17"
+          @change="changeParkingFee"
         >
           <el-option
             v-for="item in [13.5, 14.5, 15.5]"
@@ -126,7 +127,7 @@
     <el-dialog title="编辑" v-model="editVisible" width="30%">
       <el-form label-width="70px">
         <el-form-item label="车牌号">
-          <el-input v-model="form.carNumber"></el-input>
+          <el-input v-model="form.carNumber" disabled></el-input>
         </el-form-item>
         <el-form-item label="型号">
           <el-input v-model="form.carName"></el-input>
@@ -204,7 +205,7 @@ const query = reactive({
   carNumber: '',
   carName: '',
   currnetPage: 1, // 当前页数
-  pageSize: 2, // 每页多少个
+  pageSize: 5, // 每页多少个
 })
 const totalSize = ref(0) // 总共多少个数据
 // 前端分页-切割数据
@@ -224,6 +225,7 @@ const getParkingData = () => {
   }).then((res) => {
     totalSize.value = res.data.totalSize
     allList.value = res.data.list
+    perHourFee.value = res.data.perHourFees
     paging()
     // 格式化时间
     tableData.value.forEach((element) => {
@@ -259,6 +261,8 @@ const HandleAdd = async () => {
     ElMessage.success(AddData.msg)
     AddVisible.value = false
     getParkingData()
+  } else {
+    ElMessage.error(AddData.msg)
   }
 }
 
@@ -302,6 +306,20 @@ const handleDelete = (item: any, index: number) => {
       }
     })
     .catch(() => {})
+}
+
+const changeParkingFee = () => {
+  const res = service({
+    url: '/parking/changeParkingFee',
+    method: 'PUT',
+    data: {
+      perHourFee: perHourFee.value,
+    },
+  })
+
+  if (res.code == 200) {
+    ElMessage.success(res.msg)
+  }
 }
 
 // 出库入库操作
@@ -379,6 +397,7 @@ const saveEdit = async () => {
       parkingNumber: tableData.value[idx].parkingNumber,
       isEdit: true,
       ownerID: tableData.value[idx].ownerID,
+      selfID: tableData.value[idx].selfID,
       role: userInfo.personalInfo.role,
     },
   })

@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import { LeftSiderBarUser, LeftSiderBarAdmin } from '@/components/siderbarTitle'
 import { useUserLoginStore } from './userdata'
 
 // 控制左侧siderbar

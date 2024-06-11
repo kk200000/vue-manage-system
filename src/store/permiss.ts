@@ -8,7 +8,7 @@ export const usePermissStore = defineStore('permiss', {
     return {
       isBlock: false,
       rendering: true,
-      cureentKeys: [],
+      currentKeys: [],
       permissList: {
         //权限表控制
         admin: [],
@@ -31,8 +31,8 @@ export const usePermissStore = defineStore('permiss', {
         this.isBlock = true
       } else {
         this.isBlock = false
-        this.cureentKeys = permissions.data[0].permission.split(',')
-        console.log('当前用户权限', this.cureentKeys)
+        this.currentKeys = permissions.data[0].permission.split(',')
+        console.log('当前用户权限', this.currentKeys)
         userInfo.personalInfo.role = permissions.data[0]?.role
       }
 

@@ -169,8 +169,8 @@ const paging = () => {
 // 管理员获取表格数据
 const getData = async () => {
   const res = await service({ url: '/help/getList', method: 'GET' })
-  totalSize.value = res.data.length || 0
   allList.value = res.data || []
+  totalSize.value = res.data.length || allList.value.length
   formatDateForList(allList.value, 'SelectedDateTime') // 格式化时间
   paging()
 }
@@ -225,6 +225,7 @@ const getDataByID = async () => {
     },
   })
   tableData.value = res.data || []
+  totalSize.value = res.data.length || allList.value.length
   // 格式化时间
   formatDateForList(tableData.value, 'SelectedDateTime')
 }

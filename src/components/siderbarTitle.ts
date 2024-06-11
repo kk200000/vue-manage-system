@@ -23,7 +23,7 @@ export const LeftSiderBarAdmin = [
     icon: 'Stamp',
     index: '/fees',
     title: '导入水电费',
-    permiss: '17',
+    permiss: '4',
   },
 
   {

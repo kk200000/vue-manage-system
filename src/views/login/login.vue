@@ -38,6 +38,7 @@
             type="text"
             v-model="param.captcha"
             :maxlength="4"
+            @keyup.enter="submitForm(login)"
             placeholder="请输入验证码"
           >
             <template #append>

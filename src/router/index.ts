@@ -138,12 +138,12 @@ router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token')
   const permiss = usePermissStore()
   // 如果有token 就初始化权限
-  console.log(to.meta.permiss)
+
   if (!token && to.path !== '/login' && to.path !== '/register') {
     next('/login')
   } else if (
     to.meta.permiss &&
-    !lodash.includes(permiss.cureentKeys, to.meta.permiss)
+    !lodash.includes(permiss.currentKeys, to.meta.permiss)
   ) {
     // 如果没有权限，则跳转 403 页面
     next('/403')

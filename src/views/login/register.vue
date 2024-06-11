@@ -124,7 +124,7 @@ interface RegisterInfo {
 const user = useUserLoginStore()
 const router = useRouter()
 const param = reactive<RegisterInfo>({
-  username: 'admin',
+  username: '',
   password: '123',
   confirmPassword: '123',
   gender: '',

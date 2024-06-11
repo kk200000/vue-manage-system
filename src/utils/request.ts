@@ -30,6 +30,7 @@ service.interceptors.response.use(
       // router.push('/register')
       return response.data
     } else if (response?.data?.code == 2023 || response?.data?.code == 2024) {
+      console.log('11', router.currentRoute.value)
       ElMessage.error('Token过期请重新登陆~')
       router.push('/login')
       return response.data

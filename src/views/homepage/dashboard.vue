@@ -59,7 +59,7 @@
 
 <script setup lang="ts" name="dashboard">
 import Schart from 'vue-schart'
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import imgurl from '@/assets/img/img.jpg'
 import { useUserLoginStore } from '../../store/userdata'
 import { storeToRefs } from 'pinia'
@@ -68,7 +68,10 @@ import * as echarts from 'echarts'
 const userLoginData = useUserLoginStore()
 const { userLoginInfo, personalInfo } = storeToRefs(userLoginData)
 const username = localStorage.getItem('username')
-const role: string = username === 'admin' ? '超级管理员' : '普通用户'
+const roleInLocal = localStorage.getItem('role')
+const role = computed(() => {
+  return roleInLocal === 'admin' ? '超级管理员' : '普通用户'
+})
 
 const lineChart = ref(null)
 const barChart = ref(null)
