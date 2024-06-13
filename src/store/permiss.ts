@@ -39,7 +39,7 @@ export const usePermissStore = defineStore('permiss', {
       this.rendering = false
     },
 
-    // 管理员获取所有角色权限
+    // 管理员获取所有角色权限的集合，用在权限控制页面
     async getAllpermission() {
       const permissions: any = await service({
         url: '/permission/getAllpermission',

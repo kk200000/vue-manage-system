@@ -29,18 +29,16 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 
 const permiss = usePermissStore()
 const token = localStorage.getItem('token')
-const keySet = new Set(permiss.currentKeys);
 
 // 自定义权限指令v-permiss
 app.directive('permiss', {
   mounted(el, binding) {
-    const targetValue = String(binding.value);
     if (!permiss.currentKeys && !!token) {
       console.error('权限配置未初始化');
       return;
     }
     // 如果权限不在配置表里，就设置 该元素隐藏起来
-    if (!keySet.has(targetValue)) {
+    if (!lodash.includes(permiss.currentKeys, String(binding.value))) {
       el.hidden = true
     }
   },
