@@ -1,6 +1,6 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
 import { usePermissStore } from '../store/permiss'
-import Home from '../views/homepage/home.vue'
+import Home from '@/views/homepage/home.vue'
 import lodash from 'lodash'
 
 const routes: RouteRecordRaw[] = [

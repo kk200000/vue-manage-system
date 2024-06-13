@@ -113,7 +113,7 @@ const handleMany = async () => {
     },
     data: JSON.stringify(list),
   })
-  if (res.code == 200) {
+  if (res?.code == 200) {
     tableData.value.push(...list)
     ElMessage.success(res.msg)
     getDataByRole()

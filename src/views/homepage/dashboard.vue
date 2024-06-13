@@ -76,9 +76,9 @@ const role = computed(() => {
 const lineChart = ref(null)
 const barChart = ref(null)
 const imageList = [
-  'src/assets/img/view1.jpg',
-  'src/assets/img/view2.jpg',
-  'src/assets/img/view3.jpg',
+  '/assets/img/view1.jpg',
+  '/assets/img/view2.jpg',
+  '/assets/img/view3.jpg',
 ]
 onMounted(() => {
   initBarChart()

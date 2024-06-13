@@ -10,7 +10,7 @@
       router
     >
       <template v-for="(item, index) in LeftSiderBar" :key="item.index">
-        <template v-if="item.subs">
+        <template v-if="item?.subs">
           <el-sub-menu :index="index" :key="index" v-permiss="item.permiss">
             <template #title>
               <el-icon>
@@ -19,7 +19,7 @@
               <span>{{ item.title }}</span>
             </template>
             <template
-              v-for="(subItem, index) in item.subs"
+              v-for="(subItem, index) in item?.subs"
               :key="subItem.index"
             >
               <el-sub-menu
@@ -65,7 +65,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ComputedRef, ref } from 'vue'
 import { useSidebarStore } from '../store/sidebar'
 import { useRoute } from 'vue-router'
 import { useUserLoginStore } from '../store/userdata'
@@ -77,7 +77,15 @@ const sidebar = useSidebarStore()
 const userInfo = useUserLoginStore()
 const role = localStorage.getItem('role')
 
-const LeftSiderBar = computed(() => {
+interface SideBarItem {
+  icon: string
+  index: any
+  title: string
+  permiss: string
+  subs?: any
+}
+
+const LeftSiderBar: ComputedRef<SideBarItem[]> = computed(() => {
   return role === 'admin' ? LeftSiderBarAdmin : LeftSiderBarUser
 })
 

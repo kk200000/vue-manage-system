@@ -7,7 +7,7 @@ import router from './router'
 import 'element-plus/dist/index.css'
 import './assets/css/icon.css'
 import service from './utils/request'
-import configureAxios from './utils/request'
+import configureAxios from 'axios'
 import lodash from 'lodash'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 const app = createApp(App)
@@ -19,9 +19,10 @@ app.use(router)
 app.provide('$axios', service)
 service.defaults.withCredentials = true
 app.config.globalProperties.$axios = service //配置axios的全局引用
-configureAxios(router) //  配置 Axios 实例并传递路由实例 初始化axios在pinia
+configureAxios(router as AxiosRequestConfig<any>) //  配置 Axios 实例并传递路由实例 初始化axios在pinia
 
 import { usePermissStore } from './store/permiss'
+import { AxiosRequestConfig } from 'axios'
 // 注册elementplus图标
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
@@ -34,8 +35,8 @@ const token = localStorage.getItem('token')
 app.directive('permiss', {
   mounted(el, binding) {
     if (!permiss.currentKeys && !!token) {
-      console.error('权限配置未初始化');
-      return;
+      console.error('权限配置未初始化')
+      return
     }
     // 如果权限不在配置表里，就设置 该元素隐藏起来
     if (!lodash.includes(permiss.currentKeys, String(binding.value))) {

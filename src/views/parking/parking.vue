@@ -308,8 +308,8 @@ const handleDelete = (item: any, index: number) => {
     .catch(() => {})
 }
 
-const changeParkingFee = () => {
-  const res = service({
+const changeParkingFee = async() => {
+  const res:any =await service({
     url: '/parking/changeParkingFee',
     method: 'PUT',
     data: {

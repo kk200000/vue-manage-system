@@ -2,8 +2,11 @@ import axios, { AxiosInstance, AxiosError, AxiosRequestConfig } from 'axios'
 import router from '../router'
 import { ElMessage } from 'element-plus'
 
+const baseURL = import.meta.env.VITE_BASE_URL
+console.log({ baseURL })
+
 const service: AxiosInstance = axios.create({
-  baseURL: 'http://127.0.0.1:5000/',
+  baseURL,
   timeout: 15000,
   withCredentials: true,
   xsrfCookieName: 'session',
