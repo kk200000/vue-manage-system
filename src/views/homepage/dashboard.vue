@@ -64,6 +64,9 @@ import imgurl from '@/assets/img/img.jpg'
 import { useUserLoginStore } from '../../store/userdata'
 import { storeToRefs } from 'pinia'
 import * as echarts from 'echarts'
+import img1 from '@/assets/img/view1.jpg'
+import img2 from '@/assets/img/view2.jpg'
+import img3 from '@/assets/img/view3.jpg'
 
 const userLoginData = useUserLoginStore()
 const { userLoginInfo, personalInfo } = storeToRefs(userLoginData)
@@ -75,11 +78,7 @@ const role = computed(() => {
 
 const lineChart = ref(null)
 const barChart = ref(null)
-const imageList = [
-  '/assets/img/view1.jpg',
-  '/assets/img/view2.jpg',
-  '/assets/img/view3.jpg',
-]
+const imageList = [img1, img2, img3]
 onMounted(() => {
   initBarChart()
   initLineChart()

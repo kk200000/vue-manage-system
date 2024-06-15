@@ -7,7 +7,7 @@ export const usePermissStore = defineStore('permiss', {
   state: () => {
     return {
       isBlock: false,
-      rendering: true,
+      rendering: 1,
       currentKeys: [],
       permissList: {
         //权限表控制
@@ -20,7 +20,7 @@ export const usePermissStore = defineStore('permiss', {
   actions: {
     // 获取当前角色权限信息
     async getPermissionByID() {
-      this.rendering = true // 通过redering动态渲染侧边栏
+      this.rendering = 1 // 通过redering动态渲染侧边栏
       const userInfo = useUserLoginStore()
       const permissions: any = await service({
         url: '/permission/getpermissionByID',
@@ -36,7 +36,7 @@ export const usePermissStore = defineStore('permiss', {
         userInfo.personalInfo.role = permissions.data[0]?.role
       }
 
-      this.rendering = false
+      this.rendering = 0
     },
 
     // 管理员获取所有角色权限的集合，用在权限控制页面
