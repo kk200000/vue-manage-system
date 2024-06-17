@@ -92,6 +92,15 @@ const routes: RouteRecordRaw[] = [
         },
         component: () => import('../views/myhelp.vue'),
       },
+      {
+        path: '/weatherMap',
+        name: 'weatherMap',
+        meta: {
+          title: '地区天气',
+          permiss: '55',
+        },
+        component: () => import('../views/weatherMap/index.vue'),
+      },
     ],
   },
   {
@@ -148,7 +157,7 @@ router.beforeEach((to, from, next) => {
     // 如果没有权限，则跳转 403 页面
     next('/403')
   } else {
-    if (!permiss.isBlock) {
+    if (!permiss.isBlock && to.path !== '/login' && to.path !== '/register') {
       permiss.getPermissionByID() // 存疑
     }
 

@@ -33,6 +33,12 @@ export const LeftSiderBarAdmin = [
     permiss: '6',
   },
   {
+    icon: 'MostlyCloudy',
+    index: '/weatherMap',
+    title: '地区天气',
+    permiss: '55',
+  },
+  {
     icon: 'Umbrella',
     index: '/AITalk',
     title: 'AI管家',
@@ -65,6 +71,12 @@ export const LeftSiderBarUser = [
     title: '居民生活',
     permiss: '1',
     subs: [
+      {
+        icon: 'MostlyCloudy',
+        index: '/weatherMap',
+        title: '地区天气',
+        permiss: '55',
+      },
       {
         index: '/parking',
         title: '停车场',
