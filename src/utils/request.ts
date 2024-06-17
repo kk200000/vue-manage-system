@@ -3,7 +3,6 @@ import router from '../router'
 import { ElMessage } from 'element-plus'
 
 const baseURL = import.meta.env.VITE_BASE_URL
-console.log({ baseURL })
 
 const service: AxiosInstance = axios.create({
   baseURL,
@@ -11,6 +10,7 @@ const service: AxiosInstance = axios.create({
   withCredentials: true,
   xsrfCookieName: 'session',
 })
+service.defaults.protocol = 'https'
 // 请求拦截
 service.interceptors.request.use(
   (config: AxiosRequestConfig) => {
