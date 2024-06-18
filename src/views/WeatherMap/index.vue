@@ -12,7 +12,7 @@
     </div>
 
     <div>
-      <h2 class="title">GIS图</h2>
+      <h2 class="title">GIS展示</h2>
       <div class="GIS">
         <input
           placeholder="请输入地址..."
@@ -40,7 +40,7 @@ import {
 import dayjs from 'dayjs'
 import AMapLoader from '@amap/amap-jsapi-loader'
 
-const MyLocation = ref('等待输入位置...') // 地址显示
+const MyLocation = ref('等待您输入位置...') // 地址显示
 const Weather = ref(null) // 当前天气
 const MyCity = ref('正在加载中...') // 当前城市
 const keyword = ref('') // 用户输入城市
@@ -195,6 +195,7 @@ onUnmounted(() => {
 .title {
   font-weight: bolder;
   margin-bottom: 1.5rem;
+  text-align: center;
 }
 .Container {
   display: flex;
@@ -206,9 +207,9 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  width: 45vw;
+  width: 20vw;
   height: 60vh;
-  /* border: 1px solid black; */
+  border: 1px solid black;
   border-radius: 5px;
   padding: 3%;
 }
