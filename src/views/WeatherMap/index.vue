@@ -17,7 +17,7 @@
         <input
           placeholder="请输入地址..."
           type="text"
-          @input="getGIS(map)"
+          @input="getGIS(myMap)"
           v-model="keyword"
         />
         <div class="title1">{{ MyLocation }}</div>
@@ -27,41 +27,59 @@
   </div>
 </template>
 
-<script>
-import { onMounted, reactive, ref, watch, watchEffect } from 'vue'
-
-import AMapLoader from 'https://cdn.skypack.dev/@amap/amap-jsapi-loader@1.0.1'
-import { shallowRef } from 'https://cdn.skypack.dev/@vue/reactivity@3.3.4'
+<script setup>
+import {
+  onMounted,
+  reactive,
+  ref,
+  watch,
+  watchEffect,
+  shallowRef,
+  onUnmounted,
+} from 'vue'
+import dayjs from 'dayjs'
+import AMapLoader from '@amap/amap-jsapi-loader'
 
 const MyLocation = ref('等待输入位置...') // 地址显示
 const Weather = ref(null) // 当前天气
 const MyCity = ref('正在加载中...') // 当前城市
 const keyword = ref('') // 用户输入城市
-let map = shallowRef(null) // 高德Amap Api
-let myMap = ref(null) // 控制地图中心点
+
+// let map = shallowRef(null) // 高德Amap Api
+let myMap = null // 高德MAP实例装载
 let timer = ref(0) // 一秒钟计时器ID
-// 高德地图调用
-const initMap = () => {
+
+// 高德地图初始化
+onMounted(() => {
+  window._AMapSecurityConfig = {
+    securityJsCode: 'e28accfdca294e3429ec2299c80ae1bc',
+  }
   AMapLoader.load({
-    key: '7bc189fe3a0996a367e935d64d84e7a5', // 申请好的Web端开发者Key，首次调用 load 时必填
+    key: 'b2f42968b08277058fc4491ef02dd264', // 申请好的Web端开发者Key，首次调用 load 时必填
     version: '2.0', // 指定要加载的 JSAPI 的版本，缺省时默认为 1.4.15
-    plugins: ['AMap.Geolocation', 'AMap.Weather', 'AMap.PlaceSearch'], // 需要使用的的插件列表，如比例尺'AMap.Scale'等
+    plugins: [
+      'AMap.Autocomplete',
+      'AMap.Geolocation',
+      'AMap.Weather',
+      'AMap.PlaceSearch',
+    ],
   })
     .then((AMap) => {
-      map = AMap
-      console.log('11', map)
       myMap = new AMap.Map('map', {
         divMode: '3D',
-
         // resizeEnable: true,
         zoom: 10,
       })
 
       AMap.plugin(
-        ['AMap.Weather', 'AMap.Geolocation', 'AMap.PlaceSearch'],
+        [
+          'AMap.Autocomplete',
+          'AMap.Weather',
+          'AMap.Geolocation',
+          'AMap.PlaceSearch',
+        ],
+        // 这里同时加载三个组件
         function () {
-          //异步加载插件
-
           // 查询地理位置
           var geolocation = new AMap.Geolocation({
             // 是否使用高精度定位，默认：true
@@ -78,14 +96,24 @@ const initMap = () => {
             needAddress: true,
             extensions: 'all',
           })
+          // 创建地点搜索实例
+          // var auto = new AMap.AutoComplete({ city: '全国' })
+          // var placeSearch = new AMap.PlaceSearch({
+          //   map: myMap,
+          // }) //构造地点查询类
+          // auto.on('select', select) //注册监听，当选中某条记录时会触发
+          function select(e) {
+            placeSearch.setCity(e.poi.adcode)
+            placeSearch.search(e.poi.name) //关键字查询查询
+          }
 
           geolocation.getCurrentPosition()
           AMap.Event.addListener(geolocation, 'complete', onComplete)
           AMap.Event.addListener(geolocation, 'error', onError)
 
           function onComplete(data) {
+            console.log({ data })
             // data是具体的定位信息
-
             if (data.location_type === 'html5')
               MyCity.value = data.addressComponent.city
             else MyCity.value = data.city
@@ -99,7 +127,6 @@ const initMap = () => {
           function onError(err) {
             console.log(err)
             // MyCity.value = err.city
-            // 定位出错
           }
         }
       )
@@ -107,7 +134,7 @@ const initMap = () => {
     .catch((e) => {
       console.log(e)
     })
-}
+})
 
 // 创建天气查询实例
 const getWeather = (AMap) => {
@@ -125,15 +152,14 @@ const getWeather = (AMap) => {
       '空气湿度(百分比)': `${data.humidity}%`,
     }
     Weather.value = keMap
-    console.log(Weather.value)
   })
 }
 
-const getGIS = (AMap) => {
+const getGIS = () => {
   MyLocation.value = '正在查询中...'
   clearTimeout(timer)
   timer = setTimeout(() => {
-    map.plugin('AMap.PlaceSearch', function () {
+    myMap.plugin('AMap.PlaceSearch', function () {
       let PlaceSearchOptions = {
         //设置PlaceSearch属性
         city: '全国', //城市
@@ -141,10 +167,10 @@ const getGIS = (AMap) => {
         pageIndex: 1, //请求页码，默认1
         extensions: 'base', //返回信息详略，默认为base（基本信息）
       }
-      var MSearch = new map.PlaceSearch(PlaceSearchOptions) //构造PlaceSearch类
+      var MSearch = new AMap.PlaceSearch(PlaceSearchOptions)
       MyLocation.value = `查询的地点: ${keyword.value}`
       MSearch.search(keyword.value, (status, res) => {
-        console.log(res)
+        console.log({ res, status })
         if (res.poiList.pois.length > 0 && res.info === 'OK') {
           let pos = [
             res.poiList.pois[0].location.lng,
@@ -160,8 +186,8 @@ const getGIS = (AMap) => {
   }, 1000)
 }
 
-onMounted(() => {
-  initMap()
+onUnmounted(() => {
+  myMap?.destroy()
 })
 </script>
 
@@ -182,7 +208,7 @@ onMounted(() => {
   justify-content: space-around;
   width: 45vw;
   height: 60vh;
-  border: 1px solid black;
+  /* border: 1px solid black; */
   border-radius: 5px;
   padding: 3%;
 }
@@ -190,7 +216,7 @@ onMounted(() => {
 .GIS {
   width: 45vw;
   padding: 3%;
-  border: 1px solid black;
+  /* border: 1px solid black; */
   border-radius: 5px;
   height: 60vh;
 }

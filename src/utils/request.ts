@@ -4,7 +4,7 @@ import { ElMessage } from 'element-plus'
 
 const baseURL = import.meta.env.VITE_BASE_URL
 
-const service: AxiosInstance = axios.create({
+const service: any = axios.create({
   baseURL,
   timeout: 15000,
   withCredentials: true,

@@ -40,7 +40,9 @@ watch(
         text: '正在加载中...',
       })
     } else {
-      loadingInstance.close()
+      if (!!loadingInstance) {
+        loadingInstance.close()
+      }
     }
   },
   { immediate: true }

@@ -8,6 +8,7 @@
 		"serve": "vite preview"
 	},
 	"dependencies": {
+		"@amap/amap-jsapi-loader": "^1.0.1",
 		"@element-plus/icons-vue": "^2.0.9",
 		"ant-design-vue": "^4.0.8",
 		"antd": "^5.12.5",
