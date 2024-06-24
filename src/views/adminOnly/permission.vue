@@ -16,7 +16,7 @@
     <div class="mgb20 tree-wrapper">
       <el-tree
         ref="tree"
-        :data="data"
+        :data="PermissionTreeList"
         node-key="permiss"
         default-expand-all
         :check-strictly="true"
@@ -34,98 +34,17 @@ import { onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElTree } from 'element-plus'
 import { usePermissStore } from '@/store/permiss'
 import service from '@/utils/request'
-import { useUserLoginStore } from '@/store/userdata'
-import { LeftSiderBarAdmin, LeftSiderBarUser } from '@/components/siderbarTitle'
+import { PermissionTree } from '@/components/siderbarTitle'
 
 onMounted(() => {
   getPremission()
 })
 
 const role = ref<string>('admin')
-const permissionRoleList = reactive([])
 
-let data: any = [
-  // 左边侧边栏
-  {
-    label: '系统首页',
-    permiss: '1',
-  },
+// 这里正确做法应该是：放在数据库里，前端负责生成权限Tree
+const PermissionTreeList: any = reactive([...PermissionTree])
 
-  {
-    label: '停车场',
-    permiss: '3',
-    children: [
-      {
-        label: '修改费用',
-        permiss: '17',
-      },
-      {
-        label: '操作车辆',
-        permiss: '20',
-      },
-    ],
-  },
-  {
-    label: '求助管理',
-    permiss: '8',
-    children: [
-      {
-        label: '我要求助',
-        permiss: '60',
-      },
-      {
-        label: '操作求助',
-        permiss: '61',
-      },
-    ],
-  },
-  {
-    label: '生活费用',
-    permiss: '4',
-    children: [
-      {
-        label: '导入居民费用',
-        permiss: '70',
-      },
-      {
-        label: '导出居民费用',
-        permiss: '71',
-      },
-      {
-        label: '删除数据',
-        permiss: '72',
-      },
-    ],
-  },
-  {
-    label: 'AI管家',
-    permiss: '5',
-  },
-  {
-    label: '小区公告',
-    permiss: '6',
-    children: [
-      {
-        label: '创建公告',
-        permiss: '31',
-      },
-      {
-        label: '操作公告',
-        permiss: '16',
-      },
-    ],
-  },
-
-  {
-    label: '用户中心',
-    permiss: '2',
-  },
-  {
-    label: '权限管理',
-    permiss: '18',
-  },
-]
-const userInfo = useUserLoginStore()
 const permiss = usePermissStore()
 const RoleList: any = reactive([])
 // 获取当前权限

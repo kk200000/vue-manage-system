@@ -4,7 +4,7 @@
     <!-- 开启动画 -->
 
     <div class="ms-login">
-      <div class="ms-title">小区智能管理系统</div>
+      <div class="ms-title">江岭西小区欢迎您</div>
       <el-form
         :model="param"
         :rules="rules"
